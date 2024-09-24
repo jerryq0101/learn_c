@@ -54,10 +54,7 @@ int my_getline(char s[], int lim) {
     for (i = 0; i <= lim - 2 && (c = getchar()) != EXIT_CHAR && c != '\n'; ++i) {
         s[i] = c;
     }
-
-    // if terminated by a nextline, then add it for separation with next lines.
-    // if not terminated by nextline, but by the maximum boundary, then don't add 
-    // since we need to print the line together
+    
     if (c == '\n'){
 
         s[i] = c;

@@ -26,21 +26,22 @@ int main(void) {
 
     while ((c = get_line(arr, MAX_CHAR)) > 0) {
         // Loop until the index of i is not some blank character
-        for (i = c - 1; i >= 0 && (arr[i] == ' ' || arr[i] == '\t' || arr[i] == '\n'); --i)
+
+        // the c minus 2 index is to account for each line's \n and \0 characters
+        for (i = c - 2; i >= 0 && (arr[i] == ' ' || arr[i] == '\t'); --i)
             ;
-        
-        // Null-terminate the string after the last non-blank character
+        arr[i + 1] = '\n'; 
         arr[i + 1] = '\0'; 
 
-        for (a = 0; a <= i; a++) {
-            printf("%c", arr[a]);
-        }
+        printf("%s", arr);
 
         if (i > 0) {
             printf("\n");
             printf("%s %d \n", "index", i);
         }
     }
+
+    return 0;
 }
 
 int get_line(char s[], int lim) {
@@ -52,9 +53,6 @@ int get_line(char s[], int lim) {
         s[i] = c;
     }
 
-    // if terminated by a nextline, then add it for separation with next lines.
-    // if not terminated by nextline, but by the maximum boundary, then don't add 
-    // since we need to print the line together
     if (c == '\n'){
 
         s[i] = c;
