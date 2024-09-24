@@ -17,7 +17,6 @@ int main(void) {
     char continuous[THRES];
 
     while ((len = my_getline(first, THRES)) > 0) {
-        // printf("%d \n", len);
         
         if (len == THRES-1) {
             printf("%s", first);
