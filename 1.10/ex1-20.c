@@ -61,6 +61,8 @@ int main(void) {
             since_new_line++;
         }
     }
+
+    return 0;
 }
 
 int calculate(int since_new_line) {
