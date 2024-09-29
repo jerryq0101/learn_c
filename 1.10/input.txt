@@ -1,0 +1,22 @@
+#include <stdio.h>
+
+// Function to calculate the factorial of a number
+int factorial(int n) {
+    if (n == 0) {
+        return 1;
+    } else {
+        return n * factorial(n - 1);  // Recursive call
+    }
+}
+
+int main() {
+    int num = 5;  // We will calculate the factorial of this number
+
+    /* 
+     * Printing the factorial of the number.
+     * We use the factorial function defined above.
+     */
+    printf("The factorial of %d is %d\n", num, factorial(num));
+
+    return 0;
+}
