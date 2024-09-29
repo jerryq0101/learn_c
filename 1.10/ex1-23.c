@@ -23,12 +23,17 @@ int main(void) {
         int in_single_string;
 
         in_string = in_double_string = in_single_string = in_double_comment = in_single_comment = 0;
-        arr[0] = arr[1] = '\0';
-
+        arr[0] = arr[1] = ' ';
+        
+        int start_of_file = 0;
         int ignore_count = 0;
 
         while ((c = getchar()) != EOF) {
-
+                if (start_of_file == 0) {
+                        start_of_file = 1;
+                        arr[0] = c;
+                        continue;
+                }
                 arr[1] = c;
 
                 // Check if gonna go into string
