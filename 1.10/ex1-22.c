@@ -6,8 +6,7 @@ shorter lines after the last non-blank character that occurs before the n-th col
 does something intelligent with very long lines, and if there are no blanks or tabs before the specified column.
 
 */
-#define EXIT_CHAR '~'
-#define n 10
+#define n 7
 #define TAB_STOP 8
 
 int get_spaces_till_next_tab_stop(int);
@@ -20,7 +19,7 @@ int main(void) {
 
         space_elapsed = line_char_elapsed = total_line_char_elapsed = 0;
 
-        while ((c = getchar()) != EXIT_CHAR) {
+        while ((c = getchar()) != EOF) {
                 line_char_elapsed++;
                 total_line_char_elapsed++;
 
@@ -83,6 +82,7 @@ int main(void) {
                         }
                 }
         }
+        return 0;
 }
 
 // Get the spaces until the next line char
