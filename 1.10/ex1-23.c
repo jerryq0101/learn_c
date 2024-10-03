@@ -94,5 +94,4 @@ int main(void) {
         if (!in_double_comment && !in_single_comment && arr[0] != '\0') {
                 putchar(arr[0]);
         }
-
 }
