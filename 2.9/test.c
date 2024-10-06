@@ -1,14 +1,20 @@
 #include <stdio.h>
 
-unsigned getbits(unsigned x, int p, int n);
+int bitcount(unsigned x);
 
-int main(void) {
-        printf("%u", getbits(101111, 2, 2));
+int main(void)
+{
+        unsigned x = 0b1101;
+        printf("%d", bitcount(x));
 
 }
 
-/* getbits: get n bits from position p */
-unsigned getbits(unsigned x, int p, int n)
+/* bitcount: count 1 bits in x */
+int bitcount(unsigned x)
 {
-return (x >> (p+1-n)) & ~(~0 << n);
+        int b;
+        for (b = 0; x != 0; x >>= 1) // right shifts until there are no more digits on the rightest digit.
+                if (x & 0b1) // tests if the right most is a non zero value.
+                        b++;
+        return b;
 }
