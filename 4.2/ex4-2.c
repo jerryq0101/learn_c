@@ -8,7 +8,7 @@ int main(void) {
         double sum, atof(char []);
         char line[10];
 
-        strcpy(line, "123.45e-6");
+        strcpy(line, "1.2345");
         printf("%f \n", atof(line));
         return 0;
 }
