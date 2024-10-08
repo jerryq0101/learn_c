@@ -8,13 +8,8 @@ duplicate it, and to swap the top two elements. Add a command to clear the stack
 
 #include <stdio.h>
 #include <stdlib.h> /* for atof() */
-#include <math.h>
-#include <ctype.h>
-
 #define MAXOP 100   /* max size of operand or operator */
 #define NUMBER '0'  /* signal that a number was found */
-
-int storage[27];
 
 int getop(char[]);
 void push(double);
@@ -25,8 +20,7 @@ int main(void)
 {
         int type;
         double op2;
-        int a, b;
-        int var;
+        double a;
         char s[MAXOP];
         while ((type = getop(s)) != EOF)
         {
@@ -37,12 +31,8 @@ int main(void)
                         printf("%f \n", atof(s));
                         push(atof(s));
                         break;
-                
-
                 case '+':
-                        
                         push(pop() + pop());
-
                         break;
                 case '*':
                         push(pop() * pop());
@@ -62,31 +52,17 @@ int main(void)
                 case '%':
                         op2 = pop();
                         if (op2 != 0.0) {
-                                push((int) pop() % (int) op2);
-                        }
+                                push((int) pop() % (int) op2);}
                         else
                                 printf("error: zero divisor");
-                        break;
-
-                case '=': // Assume valid notations
-                        op2 = pop();
-                        var = pop();
-                        // Var is the variable, and op2 is the value
-                        storage[var - 'a'] = op2;
-                        push(op2);
                         break;
                 case '\n':
                         printf("\t%.8g\n", pop());
                         break;
                 default:
-                        // Need to push characters into stack as well
-                        if (type >= 'a' && type <= 'z') {
-                                // Handle characters
-                                push_char(type);
-                        } else {
-                                printf("error: unknown command %s\n", s);
-                        }
+                        printf("error: unknown command %s\n", s);
                         break;
+                }
         }
         return 0;
 }
@@ -94,8 +70,6 @@ int main(void)
 // ------------------------------ Stack Implementation
 
 #define MAXVAL 100  /* maximum depth of val stack */
-#define CHAR_OFFSET 1e100 /* Sets the value of the leftmost bit */
-
 int sp = 0;         /* next free stack position */
 double val[MAXVAL]; /* value stack */
 
@@ -107,24 +81,6 @@ void push(double f)
         else
                 printf("error: stack full, can't push %g\n", f);
 }
-
-/* push onto stack with char flag */
-void push_char(int f)
-{
-        if (sp < MAXVAL)
-                val[sp++] = f + CHAR_OFFSET;
-        else
-                printf("error: stack full, can't push %g\n", f);
-}
-
-int is_char(double d) {
-        return d >= CHAR_OFFSET;
-}
-
-char convert_char(double d) {
-        return (char)(d - CHAR_OFFSET);
-}
-
 /* pop: pop and return top value from stack */
 double pop(void)
 {
