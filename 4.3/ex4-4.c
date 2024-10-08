@@ -1,6 +1,5 @@
 /*
-Exercise 4-3. Given the basic framework, it's straightforward to extend the calculator. Add
-the modulus (%) operator and provisions for negative numbers.
+Based on 4-3
 
 Exercise 4-4. Add the commands to print the top elements of the stack without popping, to
 duplicate it, and to swap the top two elements. Add a command to clear the stack.
@@ -93,6 +92,41 @@ double pop(void)
                 return 0.0;
         }
 }
+
+
+void print_top_two(void) {
+        for (int i = sp-1; i >= 0; i--) {
+                printf("%d \n", val[i]);
+        }
+}
+
+
+void swap_top_two(void) {
+        int temp;
+        // Swap if there are >= 2 items in the stack 
+        if (sp > 1) 
+        {
+                temp = val[sp-1];
+                val[sp-1] = val[sp-2];
+                val[sp-2] = temp;
+        } 
+}
+
+// Assume dup has enough storage
+void duplicate_stack(double dup[]) {
+        for (int i = 0; i < sp; i++) {
+                dup[i] = val[i];
+        }
+}
+
+
+void clear_stack(void) {
+        for (int i = 0; val[i] != 0.0; i++) {
+                val[i] = 0.0;
+        } 
+}
+
+
 
 // ------------------------------ Get Next Operator OR number implementation (Unclear about this mechanism)
 
