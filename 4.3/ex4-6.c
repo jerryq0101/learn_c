@@ -105,6 +105,7 @@ int main(void)
                                 printf("error: zero divisor");
                         break;
 
+
                 case '=': // Assume valid notations
                         printf("%s \n", "we reach the equals sign");
                         op2 = pop();
