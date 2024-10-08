@@ -95,7 +95,7 @@ int main(void) {
 
         strcpy(s1_1, "a-z0-9");
 
-        expand(s1_1, s2);
+        expand(s1, s2);
 
         printf("%s \n", s2);
 }

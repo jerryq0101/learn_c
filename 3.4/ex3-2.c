@@ -50,6 +50,7 @@ int count_spaces(char s[]) {
         return count;
 }
 
+
 int main(void) {
         char arr[6] = {'e', '\t', 'c', '\n', '\t', '\0'};
         int allocation = count_spaces(arr);
