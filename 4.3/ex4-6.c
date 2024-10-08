@@ -51,24 +51,55 @@ int main(void)
                         push(a + b);
                         break;
                 case '*':
-                        push(pop() * pop());
+                        a = pop();
+                        b = pop();
+                        if (is_char(a)) {
+                                a = storage[convert_char(a) - 'a'];
+                        }
+                        if (is_char(b)) {
+                                b = storage[convert_char(b) - 'a'];
+                        }
+                        push(a * b);
                         break;
                 case '-':
-                        op2 = pop();
-                        push(pop() - op2);
+                        b = pop();
+                        a = pop();
+                        if (is_char(a)) {
+                                a = storage[convert_char(a) - 'a'];
+                        }
+                        if (is_char(b)) {
+                                b = storage[convert_char(b) - 'a'];
+                        }
+                        push(a - b);
                         break;
                 case '/':
-                        op2 = pop();
-                        if (op2 != 0.0)
-                                push(pop() / op2);
+                        b = pop();
+                        a = pop();
+                        if (is_char(a)) {
+                                a = storage[convert_char(a) - 'a'];
+                        }
+                        if (is_char(b)) {
+                                b = storage[convert_char(b) - 'a'];
+                        }
+
+                        if (b != 0.0){
+                                push(a / b);
+                        }
                         else
                                 printf("error: zero divisor\n");
                         break;
 
                 case '%':
-                        op2 = pop();
-                        if (op2 != 0.0) {
-                                push((int) pop() % (int) op2);
+                        b = pop();
+                        a = pop();
+                        if (is_char(a)) {
+                                a = storage[convert_char(a) - 'a'];
+                        }
+                        if (is_char(b)) {
+                                b = storage[convert_char(b) - 'a'];
+                        }
+                        if (b != 0.0) {
+                                push((int) a % (int) b);
                         }
                         else
                                 printf("error: zero divisor");
