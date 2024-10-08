@@ -4,7 +4,6 @@ Based on 4-4
 Exercise 4-6
 */
 
-
 #include <stdio.h>
 #include <stdlib.h> /* for atof() */
 #include <math.h>
