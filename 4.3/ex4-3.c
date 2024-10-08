@@ -6,7 +6,6 @@ Exercise 4-4. Add the commands to print the top elements of the stack without po
 duplicate it, and to swap the top two elements. Add a command to clear the stack.
 */
 
-
 #include <stdio.h>
 #include <stdlib.h> /* for atof() */
 #define MAXOP 100   /* max size of operand or operator */
