@@ -1,7 +1,8 @@
 /*
 Based on 4-4
 
-Exercise 4-6
+Exercise 4-6. Add commands for handling variables. (It's easy to provide twenty-six variables
+with single-letter names.) Add a variable for the most recently printed value.
 */
 
 #include <stdio.h>
@@ -11,8 +12,10 @@ Exercise 4-6
 
 #define MAXOP 100   /* max size of operand or operator */
 #define NUMBER '0'  /* signal that a number was found */
+#define PREVIOUS '$'
 
 double storage[27] = {0.0};
+double previous = 0.0;
 
 int getop(char[]);
 void push(double);
@@ -105,17 +108,18 @@ int main(void)
                         break;
 
 
-                case '=': // Assume valid notations
+                case '=': 
                         printf("%s \n", "we reach the equals sign");
                         op2 = pop();
                         var = pop();
                         var = convert_char(var);
-                        // Var is the variable, and op2 is the value
                         storage[((int) var) - 'a'] = op2;
                         push(op2);
                         break;
                 case '\n':
-                        printf("\t%.8g\n", pop());
+                        previous = pop();
+                        printf("\t%.8g\n", previous);
+
                         break;
                 default:
                         // Need to push characters into stack as well
@@ -223,13 +227,14 @@ int getop(char s[])
         while ((s[0] = c = getch()) == ' ' || c == '\t')
                 ;
         s[1] = '\0';
-        if (!isdigit(c) && c != '.' && c != '-')
+        if (!isdigit(c) && c != '.' && c != '-' && c != '$')
                 return c; /* not a number */
 
         i = 0;
         // Catching the case where '-' is actually a subtraction operator
         // Check if the next character from the negative sign is a number, if not, return
-        if (c == '-'){
+        if (c == '-')
+        {
                 int digit = isdigit(c = getch());
                 if (digit) {
                         s[1] = c;
@@ -238,6 +243,18 @@ int getop(char s[])
                         ungetch(c);
                         return '-';
                 }
+        }
+
+        // Replacing $ with the actual previous value
+        if (c == '$')
+        {       
+                printf("%s \n", "Access Previous");
+                printf("%f \n", previous);
+                // Load Previous into the char array s
+                // Search for the last digit in s
+                // Set that digit to i
+                // Set that last digit char to c
+                i = 1;
         }
         
 
