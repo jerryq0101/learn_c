@@ -15,7 +15,7 @@ with single-letter names.) Add a variable for the most recently printed value.
 #define PREVIOUS '$'
 
 double storage[27] = {0.0};
-double previous = 0.0;
+double previous; // Store previous value
 
 int getop(char[]);
 void push(double);
@@ -248,13 +248,15 @@ int getop(char s[])
         // Replacing $ with the actual previous value
         if (c == '$')
         {       
-                printf("%s \n", "Access Previous");
-                printf("%f \n", previous);
                 // Load Previous into the char array s
+                sprintf(s, "%f", previous);
+
                 // Search for the last digit in s
-                // Set that digit to i
+                while (s[++i] != '\0')
+                        ;
+                
                 // Set that last digit char to c
-                i = 1;
+                c = s[i-1];
         }
         
 
