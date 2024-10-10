@@ -10,10 +10,11 @@ getch and ungetch unnecessary. Revise the calculator to use this approach.
 #include <math.h>
 #include <ctype.h>
 
-#define MAXOP 100   /* max size of operand or operator */
+#define MAXOP 100 /* max size of operand or operator */
 #define MAXLEN 1000
-#define NUMBER '0'  /* signal that a number was found */
+#define NUMBER '0' /* signal that a number was found */
 #define PREVIOUS '$'
+#define EXIT_CHAR 'q'
 
 double storage[27] = {0.0};
 double previous; // Store previous value
@@ -27,14 +28,12 @@ void push_char(int f);
 void print_top_two(void);
 int get_line(char line[], unsigned int max_line_len);
 
-
 // Index on current line
 // - Resets when we reach a new line
 int current_line_index = 0;
 
-
 // For debugging purposes, this represents a single line.
-char line[MAXOP] = {'1', '.', '2', '0', '4', ' ', '-', '1', '.', '1', ' ', '%', '\n'};
+char line[MAXOP] = {'\0'};
 
 /* reverse Polish calculator */
 int main(void)
@@ -45,7 +44,8 @@ int main(void)
         double var = 0.0;
         char s[MAXOP] = {0};
 
-        // while (get_line(line, MAXLEN) != EOF) {
+        while (get_line(line, MAXLEN))
+        {
                 while ((type = getop(s)) != '\0')
                 {
                         switch (type)
@@ -53,15 +53,16 @@ int main(void)
                         case NUMBER:
                                 printf("%f \n", atof(s));
                                 push(atof(s));
-                                // clear s here
                                 break;
                         case '+':
                                 a = pop();
                                 b = pop();
-                                if (is_char(a)) {
+                                if (is_char(a))
+                                {
                                         a = storage[convert_char(a) - 'a'];
                                 }
-                                if (is_char(b)) {
+                                if (is_char(b))
+                                {
                                         b = storage[convert_char(b) - 'a'];
                                 }
                                 push(a + b);
@@ -69,10 +70,12 @@ int main(void)
                         case '*':
                                 a = pop();
                                 b = pop();
-                                if (is_char(a)) {
+                                if (is_char(a))
+                                {
                                         a = storage[convert_char(a) - 'a'];
                                 }
-                                if (is_char(b)) {
+                                if (is_char(b))
+                                {
                                         b = storage[convert_char(b) - 'a'];
                                 }
                                 push(a * b);
@@ -80,10 +83,12 @@ int main(void)
                         case '-':
                                 b = pop();
                                 a = pop();
-                                if (is_char(a)) {
+                                if (is_char(a))
+                                {
                                         a = storage[convert_char(a) - 'a'];
                                 }
-                                if (is_char(b)) {
+                                if (is_char(b))
+                                {
                                         b = storage[convert_char(b) - 'a'];
                                 }
                                 push(a - b);
@@ -91,14 +96,17 @@ int main(void)
                         case '/':
                                 b = pop();
                                 a = pop();
-                                if (is_char(a)) {
+                                if (is_char(a))
+                                {
                                         a = storage[convert_char(a) - 'a'];
                                 }
-                                if (is_char(b)) {
+                                if (is_char(b))
+                                {
                                         b = storage[convert_char(b) - 'a'];
                                 }
 
-                                if (b != 0.0){
+                                if (b != 0.0)
+                                {
                                         push(a / b);
                                 }
                                 else
@@ -107,24 +115,26 @@ int main(void)
                         case '%':
                                 b = pop();
                                 a = pop();
-                                if (is_char(a)) {
+                                if (is_char(a))
+                                {
                                         a = storage[convert_char(a) - 'a'];
                                 }
-                                if (is_char(b)) {
+                                if (is_char(b))
+                                {
                                         b = storage[convert_char(b) - 'a'];
                                 }
-                                if ((int) b != 0) {
-                                        push((int) a % (int) b);
+                                if ((int)b != 0)
+                                {
+                                        push((int)a % (int)b);
                                 }
                                 else
                                         printf("error: zero divisor \n");
                                 break;
-                        case '=': 
-                                printf("%s \n", "we reach the equals sign");
+                        case '=':
                                 op2 = pop();
                                 var = pop();
                                 var = convert_char(var);
-                                storage[((int) var) - 'a'] = op2;
+                                storage[((int)var) - 'a'] = op2;
                                 push(op2);
                                 break;
                         case '\n':
@@ -138,22 +148,26 @@ int main(void)
                                 break;
                         default:
                                 // Need to push characters into stack as well
-                                if (type >= 'a' && type <= 'z') {
+                                if (type >= 'a' && type <= 'z')
+                                {
                                         printf("%c\n", type);
                                         // Handle characters
                                         push_char(type);
-                                } else {
+                                }
+                                else
+                                {
                                         printf("error: unknown command %s\n", s);
                                 }
                                 break;
                         }
                 }
+        }
         return 0;
 }
 
 // ------------------------------ Stack Implementation
 
-#define MAXVAL 100  /* maximum depth of val stack */
+#define MAXVAL 100 /* maximum depth of val stack */
 #define CHAR_OFFSET 10000000
 
 int sp = 0;         /* next free stack position */
@@ -177,12 +191,14 @@ void push_char(int f)
                 printf("error: stack full, can't push %d\n", f);
 }
 
-int is_char(double d) {
+int is_char(double d)
+{
         return d >= CHAR_OFFSET;
 }
 
-char convert_char(double d) {
-        return (int) (d - CHAR_OFFSET);
+char convert_char(double d)
+{
+        return (int)(d - CHAR_OFFSET);
 }
 
 /* pop: pop and return top value from stack */
@@ -197,48 +213,45 @@ double pop(void)
         }
 }
 
-void print_top_two(void) {
-        for (int i = sp-1; i >= 0; i--) {
+void print_top_two(void)
+{
+        for (int i = sp - 1; i >= 0; i--)
+        {
                 printf("%f \n", val[i]);
         }
 }
 
-// Swap if there are >= 2 items in the stack 
-void swap_top_two(void) {
+// Swap if there are >= 2 items in the stack
+void swap_top_two(void)
+{
         int temp;
-        if (sp > 1) 
+        if (sp > 1)
         {
-                temp = val[sp-1];
-                val[sp-1] = val[sp-2];
-                val[sp-2] = temp;
-        } 
+                temp = val[sp - 1];
+                val[sp - 1] = val[sp - 2];
+                val[sp - 2] = temp;
+        }
 }
 
 // Assume dup has enough storage
-void duplicate_stack(double dup[]) {
-        for (int i = 0; i < sp; i++) {
+void duplicate_stack(double dup[])
+{
+        for (int i = 0; i < sp; i++)
+        {
                 dup[i] = val[i];
         }
 }
 
-void clear_stack(void) {
+void clear_stack(void)
+{
         sp = 0;
 }
 
-
-
 // ------------------------------ Get Next Operator OR number implementation (Unclear about this mechanism)
 
-
-
 #include <ctype.h>
-int getch(void);
-void ungetch(int);
 
 /* getop: get next character or numeric operand */
-
-
-
 // char s[] : the string that is filled with the relevant operator or number
 int getop(char s[])
 {
@@ -263,10 +276,13 @@ int getop(char s[])
         if (c == '-')
         {
                 int digit = isdigit(c = line[current_line_index++]);
-                if (digit) {
+                if (digit)
+                {
                         s[1] = c;
                         i = 1;
-                } else {
+                }
+                else
+                {
                         current_line_index--;
                         return '-';
                 }
@@ -281,81 +297,58 @@ int getop(char s[])
                 // Search for the last digit in s
                 while (s[++i] != '\0')
                         ;
-                
+
                 // Set that last digit char to c
-                c = s[i-1];
+                c = s[i - 1];
         }
-        
 
         if (isdigit(c)) /* collect integer part */
                 while (isdigit(s[++i] = c = line[current_line_index++]))
                         ;
-        
+
         // this thing did collect the decimal part
-        
+
         if (c == '.') /* collect fraction part */
                 while (isdigit(s[++i] = c = line[current_line_index++]))
                         ;
-        
-        // This prevents atof from looking for more characters, saving need to reset s everytime
+
+        // This prevents atof from looking for more characters, saving need to reset s everytime look for operator
         s[i] = '\0';
         if (c != EOF)
                 current_line_index--;
         return NUMBER;
 }
 
-
 // ------------------------------ get_line
 
 int get_line(char line[], unsigned int max_line_len)
 {
-        // Dummy implementation for testing
-        line[0] = '$';
-        line[1] = ' ';
-        line[2] = '5';
-        line[3] = ' ';
-        line[4] = '-';
-        line[5] = ' ';
-        line[6] = '6';
-        line[7] = ' ';
-        line[8] = '+';
-        line[9] = '\n';
-        return 0;
-//   int c, i;
+        // // Dummy implementation for testing
+        // line[0] = '$';
+        // line[1] = ' ';
+        // line[2] = '5';
+        // line[3] = ' ';
+        // line[4] = '-';
+        // line[5] = ' ';
+        // line[6] = '6';
+        // line[7] = ' ';
+        // line[8] = '+';
+        // line[9] = '\n';
+        // return 0;
+        int c, i;
 
-//   for (i = 0; i < max_line_len - 1 && (c = getchar()) != EOF && c != '\n'; ++i)
-//   {
-//     line[i] = c;
-//   }
+        for (i = 0; i < max_line_len - 1 && (c = getchar()) != EXIT_CHAR && c != '\n'; ++i)
+        {
+                line[i] = c;
+        }
 
-//   if (c == '\n')
-//   {
-//     line[i] = c;
-//     ++i;
-//   }
+        if (c == '\n')
+        {
+                line[i] = c;
+                ++i;
+        }
 
-//   line[i] = '\0';
+        line[i] = '\0';
 
-//   return i;
-}
-
-
-// ------------------------------ Buffer Read from Input Implementation
-
-
-#define BUFSIZE 100
-char buf[BUFSIZE]; /* buffer for ungetch */
-int bufp = 0;      /* next free position in buf */
-
-int getch(void)    /* get a (possibly pushed-back) character */
-{
-        return (bufp > 0) ? buf[--bufp] : getchar();
-}
-
-void ungetch(int c) /* push character back on input */
-{
-        if (bufp >= BUFSIZE)
-                printf("ungetch: too many characters\n");
-        else
-                buf[bufp++] = c;
+        return i;
 }
