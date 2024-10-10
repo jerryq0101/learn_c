@@ -34,7 +34,7 @@ int current_line_index = 0;
 
 
 // For debugging purposes, this represents a single line.
-char line[MAXOP] = {'1', '.', '2', '0', '4', ' ', '2', '.', '4', ' ', '+', '\n'};
+char line[MAXOP] = {'1', '.', '2', '0', '4', ' ', '-', '1', '.', '1', ' ', '%', '\n'};
 
 /* reverse Polish calculator */
 int main(void)
@@ -113,11 +113,11 @@ int main(void)
                                 if (is_char(b)) {
                                         b = storage[convert_char(b) - 'a'];
                                 }
-                                if (b != 0.0) {
+                                if ((int) b != 0) {
                                         push((int) a % (int) b);
                                 }
                                 else
-                                        printf("error: zero divisor");
+                                        printf("error: zero divisor \n");
                                 break;
                         case '=': 
                                 printf("%s \n", "we reach the equals sign");
