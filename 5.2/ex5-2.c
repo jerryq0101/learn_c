@@ -71,13 +71,11 @@ int getdouble(double *pn)
                 int power = 0;
                 if (c == '.') {
                         c = getchar();
-                        if (isdigit(c)) {
-                                for (;isdigit(c);) 
-                                {
-                                        *pn = 10 * *pn + (c - '0');
-                                        c = getch();
-                                        power++;
-                                }
+                        for (;isdigit(c);) 
+                        {
+                                *pn = 10 * *pn + (c - '0');
+                                c = getch();
+                                power++;
                         }
                         ungetch(c);
                         
