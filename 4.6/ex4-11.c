@@ -130,7 +130,7 @@ int getop(char s[])
 
         i = 0;
         // Catching the case where '-' is actually a subtraction operator
-        // Check if the next character from the negative sign is a number, if not, return
+        // Check if the next character from the negative sign is a number, if not, return that number.
         if (c == '-'){
                 int digit = isdigit(c = getch());
                 if (digit) {
@@ -152,7 +152,8 @@ int getop(char s[])
                 while (isdigit(s[++i] = c = getch()))
                         ;
         s[i] = '\0';
-        if (c != EOF)
+
+        if (c != EOF) // Since we counted one more character, we need to ungetch it
                 last_c = c;
         return NUMBER;
 }

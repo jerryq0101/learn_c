@@ -51,8 +51,6 @@ int getdouble(double *pn)
         if (c == '+' || c == '-'){
                 c = getch();
         }
-
-        
         
         if (isspace(c)) {
                 while (isspace(c = getch())) /* skip white space */
