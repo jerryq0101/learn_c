@@ -4,6 +4,8 @@
 /*
 Exercise 5-7. Rewrite readlines to store lines in an array supplied by main, rather than
 calling alloc to maintain storage. How much faster is the program?
+
+Not gonna measure time for this since it involves free form input.
 */
 #define MAXLEN 1000
 #define maxline 5

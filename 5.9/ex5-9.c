@@ -16,14 +16,11 @@ void month_day(int year, int yearday, int *pmonth, int *pday);
 int main(void) {
         printf("%d\n", day_of_year(2024, 10, 21));
 
-        int a = 0;
-        int b = 0;
-
-        int *month = &a;
-        int *day = &b;
-        month_day(2023, 294, month, day);
+        int month;
+        int day;
+        month_day(2023, 294, &month, &day);
         
-        printf("%d %d\n", a, b);
+        printf("%d %d\n", month, day);
 }
 
 /* day_of_year: set day of year from month & day */

@@ -9,11 +9,11 @@ end of the string s, and zero otherwise.
 int strend(char *s, char *t);
 
 int main(void) {
-        char arr1[7];
-        char arr2[4];
+        char arr1[24];
+        char arr2[7];
 
-        strcpy(arr1, "abcdef");
-        strcpy(arr2, "def");
+        strcpy(arr1, "This si a simple string");
+        strcpy(arr2, "stri5g");
 
         printf("%d", strend(arr1, arr2));
 }
