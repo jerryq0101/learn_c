@@ -55,8 +55,8 @@ parse a direct declarator */
 void dirdcl(void)
 {
         int type;
-        if (tokentype == '(')
-        { /* ( dcl ) */
+        if (tokentype == '(') /* ( dcl ) */
+        {
                 dcl();
                 if (tokentype != ')'){
                         printf("error: missing )\n");
@@ -64,8 +64,8 @@ void dirdcl(void)
                         return;
                 }
         }
-        else if (tokentype == NAME) 
-        {/* variable name */
+        else if (tokentype == NAME) /* variable name */
+        {
                 strcpy(name, token);
         }
         else
