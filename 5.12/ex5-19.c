@@ -71,7 +71,12 @@ int main() /* convert declaration to words */
 void push(char element);
 char pop();
 
-int is_next_basic_type(void) 
+/*
+Logic: If there is a next op that is () [] after the pointer, there needs to be a parentheses since
+if there isn't the meaning would have changed for the converted function, as those op are higher priority
+than the pointer.
+*/
+int is_next_basic_type(void)
 {
         int c, getch(void);
         void ungetch(int);
@@ -162,7 +167,6 @@ int gettoken(void) /* return next token */
 }
 
 
-
 #define BUFSIZE 100
 char buf[BUFSIZE];
 int bufp = 0; /* buffer for ungetch */
@@ -178,12 +182,3 @@ void ungetch(int c) /* push character back on input */
         else
                 buf[bufp++] = c;
 }
-
-// int error_handle(void)
-// {
-//         int c;
-//         while ((c = gettoken()) != '\n')
-//                 ;
-//         error = 1;
-//         return 0;
-// }
