@@ -79,7 +79,7 @@ void dirdcl(void)
                 error_handle();
                 return;
         }
-        while ((type = gettoken()) == PARENS || type == BRACKETS || type == PARAMS)
+        while ((type = gettoken()) == PARENS || type == BRACKETS || type == PARAMS || type == -1)
         {
                 // check if its actually a function
                 if (type == PARAMS)
@@ -92,12 +92,18 @@ void dirdcl(void)
                 else if (type == PARENS){
                         strcat(out, " function returning");
                 }
-                else
+                else if (type == BRACKETS)
                 {
                         strcat(out, " array");
                         strcat(out, token);
                         strcat(out, " of");
+                }else // -1 , no closing brackets error
+                {
+                        printf("error: invalid types or characters");
+                        error_handle();
+                        return;
                 }
+                
         }
 }
 
@@ -130,21 +136,23 @@ int gettoken(void) /* return next token */
                 } 
                 else 
                 {
-                                ungetch(c); // push back the character if not ')'
+                        ungetch(c); // push back the character if not ')'
                 }
                 
                 if (is_valid_type())
                 {
                         strcpy(token, "(");
-                        while ((c = getch()) != ')')
+                        while ((c = getch()) != ')' && (islower(c) || c == ' ' || c == ',' || c == '_'))
                         {
                                 *++p = c;
+                        }
+                        if (c != ')') {
+                                return -1;
                         }
                         return tokentype = PARAMS;
                 }
                 else
                 {
-                        ungetch(c);
                         return tokentype = '(';
                 }
         }
@@ -157,8 +165,9 @@ int gettoken(void) /* return next token */
         }
         else if (isalpha(c))
         {
-                for (*p++ = c; isalnum(c = getch());)
+                for (*p++ = c; isalnum(c = getch()) || c == '_' ;){
                         *p++ = c;
+                }
                 *p = '\0';
                 ungetch(c);
                 return tokentype = NAME;
@@ -218,7 +227,7 @@ int is_valid_type()
         *(++local_string) = '\0';
         ungetch(c);
         
-        local_string -= count;
+        local_string -= (count);
 
         const char* basic_types[] = {
                 "void",
@@ -243,7 +252,7 @@ int is_valid_type()
                 }
         }
 
-        // ungetch all of this
+        // ungetch all of this - ungetches until and not including the character after (
         strrev(local_string); // since ungetch is a stack
         while (*local_string != '\0')
         {
