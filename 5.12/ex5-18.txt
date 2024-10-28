@@ -1,0 +1,3 @@
+void (*comp_2)()
+void fn(int a, float   b    ,       char long_name    )
+float fn_test(    int a, char name ( *
