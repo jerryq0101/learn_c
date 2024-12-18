@@ -78,9 +78,9 @@ int getword(char *word, int lim)
         for (; --lim > 0; w++)
                 if (!isalnum(*w = getch()) && *w != '_' && *w != '\"' && *w != '/' && *w != '\'' && *w != '*') 
                 // only _  " / can appear at the end or in the middle of a possible word sequence
-                // Assuming the program is correct, this is fine
+                // This is fine:
                 // since if valid, _ will be for sure in the middle of a word sequence
-                // " will also be for sure at the end, and we capture it to include ""
+                // " will also be for sure at the end, and we capture it to include "" (So capturing individual string constants is possible, but not multiple stuff)
                 // / will always be in pairs, and be broken by a new space
                 // /* and */ will also always be in pairs and be broken by a space after it
                 // Relying on good formatting to parse through.

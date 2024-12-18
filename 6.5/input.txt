@@ -1,0 +1,12 @@
+#include <stdio.h>
+int main() {
+int variable_one = 10;
+float variable_two = 3.14;
+char variable_three[] = "Hello";
+int long_var_name = 42;
+double another_long_var = 2.71828;
+
+printf("%d %f %s %d %lf\n", variable_one, variable_two, variable_three, long_var_name, another_long_var);
+
+return 0;
+}
