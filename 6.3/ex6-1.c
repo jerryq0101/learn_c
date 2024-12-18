@@ -14,9 +14,11 @@ struct key
         int count;
 } keytab[] = {
         // List is assumed to be sorted by binary search.
-        "\"EnterTHEGOAT\"", 0, // Capital letters are earlier in the ascii
+        "\"Enter\"", 0, // Capital letters are earlier in the ascii
         "#ifdef", 0,
+        "*/", 0,        
         "/*", 0,
+        "//", 0,
         "auto", 0,
         "break", 0,
         "case", 0,
@@ -25,6 +27,7 @@ struct key
         "continue", 0,
         "default", 0,
         "unsigned", 0,
+        "user's", 0,
         "user_name", 0,
         "void", 0,
         "volatile", 0,
@@ -67,14 +70,20 @@ int getword(char *word, int lim)
                 ;
         if (c != EOF)
                 *w++ = c;
-        if (!isalpha(c) && c != '#' && c != '\"' )
+        if (!isalpha(c) && c != '#' && c != '\"' && c != '/' && c != '*') // can't do all punct otherwise might absorb everything
         {
                 *w = '\0';
                 return c;
         }
         for (; --lim > 0; w++)
-                if (!isalnum(*w = getch()) && *w != '_' && *w != '\"') 
-                // only _  " / can appear at the end of a possible word sequence
+                if (!isalnum(*w = getch()) && *w != '_' && *w != '\"' && *w != '/' && *w != '\'' && *w != '*') 
+                // only _  " / can appear at the end or in the middle of a possible word sequence
+                // Assuming the program is correct, this is fine
+                // since if valid, _ will be for sure in the middle of a word sequence
+                // " will also be for sure at the end, and we capture it to include ""
+                // / will always be in pairs, and be broken by a new space
+                // /* and */ will also always be in pairs and be broken by a space after it
+                // Relying on good formatting to parse through.
                 {
                         ungetch(*w);
                         break;
