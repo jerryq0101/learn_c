@@ -1,0 +1,20 @@
+#include <stdio.h>
+#define MAX_LEN 100
+/* This function prints a greeting /
+void print_hello(const char name) {
+printf("Hello, %s!\n", name);
+}
+int main() {
+char user_name[MAX_LEN];
+// Prompt for user's name
+printf("EnterTHEGOAT");
+fgets(user_name, sizeof(user_name), stdin);
+
+#ifdef DEBUG
+    printf("Debug: user_name = %s", user_name); 
+#endif
+
+print_hello(user_name);
+
+return 0;
+}
