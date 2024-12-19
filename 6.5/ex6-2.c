@@ -58,10 +58,14 @@ struct wnode *alloc(void)
         return node;
 }
 
+static int MIN_LEN;
+
 int main(void) 
 {
         int n;
         char word[MAXWORD];
+
+        scanf("%d", &MIN_LEN);
 
         FILE *fp = fopen("input.txt", "r");
         if (fp == NULL)
@@ -77,9 +81,9 @@ int main(void)
                 if (isalpha(word[0]))
                 {
                         // Check if the word is a program keyword, then don't print it
-                        if (!isKeyword(word) && strlen(word) >= 6)
+                        if (!isKeyword(word) && strlen(word) >= MIN_LEN)
                         {
-                                printf("Variable name: %s", word);
+                                // printf("Variable name: %s", word);
 
                                 // Situation: If they don't begin with the same initial char,
                                 // They don't equal anyway.
@@ -131,7 +135,7 @@ int main(void)
         
         for (int i = 0; i < ALPHABET; i++)
         {
-                bfs_to_level(tries[i], 6);
+                bfs_to_level(tries[i], MIN_LEN);
         }
 }
 
@@ -185,10 +189,17 @@ void bfs_to_level(struct wnode* root, int target_level)
         {
                 // Print the group
                 // queue[front].strings
-                for (int i = 0; i < MAXGROUP; i++) {
-                        if (queue[front]->strings[i] != NULL) {
-                                        printf("%s\n", queue[front]->strings[i]);
-                        }
+                int count = 1;
+                for (int j = front; j < rear; j++) {
+                        printf("Group %d: ", count);
+                                for (int i = 0; i < MAXGROUP; i++) {
+                                                
+                                                if ( queue[j]->strings[i] != NULL) {
+                                                        printf("%s ", queue[j]->strings[i]);
+                                                }
+                                }
+                        printf("\n");
+                        count++;
                 }
         }
 }
