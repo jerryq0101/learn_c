@@ -1,12 +1,13 @@
 #include <stdio.h>
 int main() {
-int variable_one = 10;
-float variable_two = 3.14;
-char variable_three[] = "Hello";
-int long_var_name = 42;
-double another_long_var = 2.71828;
+int variableone = 10;
+float variabletwo = 3.14;
+char variablethree[] = "Hello";
+int longvarname = 42;
+double anotherl = 2.71828;
+float anotheravar = 2.3;
 
-printf("%d %f %s %d %lf\n", variable_one, variable_two, variable_three, long_var_name, another_long_var);
+printf("%d %f %s %d %lf\n", variableone, variabletwo, variablethree, longvarname, anotherlongvar);
 
 return 0;
 }

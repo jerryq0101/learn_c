@@ -23,10 +23,11 @@ find and print word lists.
 int getch(void);
 void ungetch(int);
 int isKeyword(char* str);
-
 int getword(char *, int);
+void add_string_to_arr(char** arr, int length, char* element);
 
 //////////////// BUILDING A PREFIX TREE TO FIND SIMILARLY NAMED WORDS //////////////////
+
 
 // held_character: the character represented at this node
 // children: the possible next characters
@@ -34,10 +35,26 @@ int getword(char *, int);
 struct wnode {
         char held_character;
         struct wnode* children[ALPHABET];
-        char* strings[10];
+        char* strings[MAXGROUP];
 };
 
+struct wnode *alloc(void);
+struct wnode* add_node(struct wnode* node, char new_character,const char* word);
+
 static struct wnode* tries[ALPHABET];
+
+/* walloc: make a wnode */
+struct wnode *alloc(void)
+{
+        struct wnode *node = malloc(sizeof(struct wnode));
+        for (int i = 0; i < ALPHABET; i++) {
+                node->children[i] = NULL;
+        }
+        for (int i = 0; i < MAXGROUP; i++) {
+                node->strings[i] = NULL;
+        }
+        return node;
+}
 
 int main(void) 
 {
@@ -67,21 +84,96 @@ int main(void)
                                 
                                 // see what is the initial character
                                         // make an initial node in the tries array with that character
+                                struct wnode* curr_node = NULL;
+                                switch (word[0])
+                                {
+                                        case 'a': {
+                                                if (tries['a'-'a'] == NULL) {
+                                                        struct wnode* a_wnode = alloc();
+                                                        a_wnode->held_character = 'a';
+                                                        curr_node = a_wnode;
+                                                        tries['a' - 'a'] = a_wnode; 
+                                                } else {
+                                                        curr_node = tries['a'-'a'];
+                                                }
+                                                break;
+                                        }
+                                        default:
+                                                break;
+                                        
+                                }
                                 
                                 // while there are more characters in the word
                                         // use the same initial node to add a character.
                                         // put that node into an addnode function
                                         // save the latest node
+                                char* w = &word; // index of the word
+                                w++;
+
+                                while ((*w) != '\0' && curr_node != NULL)
+                                {
+                                        struct wnode* newly_added = add_node(curr_node, *w, word);
+                                        curr_node = newly_added;
+                                        w++;
+                                }
+                                
                         }
                 }
         fclose(fp);
 }
 
-// add node function
+// add_node:
 // if desired character node doesn't exist under this trie: just directly appends a value to the given node
 // else: don't add a node, and just return the corresponding next character node
 // BOTH CASES: should append the string to the node lists
 
+struct wnode* add_node(
+                struct wnode* node, 
+                char new_character,
+                const char* word
+        )
+{
+        struct wnode* arr_value = node->children[new_character - 'a'];
+
+        if (arr_value == NULL) // This path doesn't exist yet, so create a new node
+        {
+                struct wnode* new_node = alloc();
+                new_node->held_character = new_character;
+                
+                // set the string of the path
+                add_string_to_arr(new_node->strings, MAXGROUP, word);
+
+                // set one of the node's children to this
+                node->children[new_character -'a'] = new_node;
+                return new_node;
+        }
+        else // The path exists
+        {
+                // set the string here
+                add_string_to_arr(arr_value->strings, MAXGROUP, word);
+
+                // then return
+                return arr_value;
+        }
+}
+
+
+void add_string_to_arr(char** arr, int length, char* element)
+{
+        char** end = arr + length;
+
+        while (arr < end){
+                // check if a string spot is free
+                if ((*arr) == NULL)
+                {
+                        // need to make a string copy in case the element changes
+                        *arr = strdup(element);
+                        return;
+                }
+                arr++;
+        }
+        return;
+}
 
 
 /////////////// FINDING THE VARIABLE NAMES LONGER THAN 6 characters ////////////
@@ -103,7 +195,7 @@ int getword(char *word, int lim)
         }
         for (; --lim > 0; w++){
                 *w = getch();
-                if (*w == ';' || *w == ' ' || *w == '=') 
+                if ((*w) == ';' || (*w) == ' ' || (*w) == '=') 
                 {
                         ungetch(*w);
                         break;
