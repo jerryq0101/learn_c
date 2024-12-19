@@ -60,6 +60,21 @@ struct wnode *alloc(void)
 
 static int MIN_LEN;
 
+
+// get_or_create_root:
+// - Decision to create a new root prefix node for the trie
+// returns the trie root reference (potentially initializes one)
+struct wnode* get_or_create_root(char c)
+{
+        if (tries[c-'a'] == NULL) {
+                struct wnode* char_wnode = alloc();
+                char_wnode->held_character = c;
+                tries[c - 'a'] = char_wnode; 
+                return char_wnode;
+        } 
+        return tries[c - 'a'];
+}
+
 int main(void) 
 {
         int n;
@@ -94,16 +109,110 @@ int main(void)
                                 switch (word[0])
                                 {
                                         case 'a': {
-                                                if (tries['a'-'a'] == NULL) {
-                                                        struct wnode* a_wnode = alloc();
-                                                        a_wnode->held_character = 'a';
-                                                        curr_node = a_wnode;
-                                                        tries['a' - 'a'] = a_wnode; 
-                                                } else {
-                                                        curr_node = tries['a'-'a'];
-                                                }
+                                                curr_node = get_or_create_root('a');
                                                 break;
                                         }
+                                        case 'b': {
+                                                        curr_node = get_or_create_root('b');
+                                                        break;
+                                        }
+                                        case 'c': {
+                                                        curr_node = get_or_create_root('c');
+                                                        break;
+                                        }
+                                        case 'd': {
+                                                        curr_node = get_or_create_root('d');
+                                                        break;
+                                        }
+                                        case 'e': {
+                                                        curr_node = get_or_create_root('e');
+                                                        break;
+                                        }
+                                        case 'f': {
+                                                        curr_node = get_or_create_root('f');
+                                                        break;
+                                        }
+                                        case 'g': {
+                                                        curr_node = get_or_create_root('g');
+                                                        break;
+                                        }
+                                        case 'h': {
+                                                        curr_node = get_or_create_root('h');
+                                                        break;
+                                        }
+                                        case 'i': {
+                                                        curr_node = get_or_create_root('i');
+                                                        break;
+                                        }
+                                        case 'j': {
+                                                        curr_node = get_or_create_root('j');
+                                                        break;
+                                        }
+                                        case 'k': {
+                                                        curr_node = get_or_create_root('k');
+                                                        break;
+                                        }
+                                        case 'l': {
+                                                        curr_node = get_or_create_root('l');
+                                                        break;
+                                        }
+                                        case 'm': {
+                                                        curr_node = get_or_create_root('m');
+                                                        break;
+                                        }
+                                        case 'n': {
+                                                        curr_node = get_or_create_root('n');
+                                                        break;
+                                        }
+                                        case 'o': {
+                                                        curr_node = get_or_create_root('o');
+                                                        break;
+                                        }
+                                        case 'p': {
+                                                        curr_node = get_or_create_root('p');
+                                                        break;
+                                        }
+                                        case 'q': {
+                                                        curr_node = get_or_create_root('q');
+                                                        break;
+                                        }
+                                        case 'r': {
+                                                        curr_node = get_or_create_root('r');
+                                                        break;
+                                        }
+                                        case 's': {
+                                                        curr_node = get_or_create_root('s');
+                                                        break;
+                                        }
+                                        case 't': {
+                                                        curr_node = get_or_create_root('t');
+                                                        break;
+                                        }
+                                        case 'u': {
+                                                        curr_node = get_or_create_root('u');
+                                                        break;
+                                        }
+                                        case 'v': {
+                                                        curr_node = get_or_create_root('v');
+                                                        break;
+                                        }
+                                        case 'w': {
+                                                        curr_node = get_or_create_root('w');
+                                                        break;
+                                        }
+                                        case 'x': {
+                                                        curr_node = get_or_create_root('x');
+                                                        break;
+                                        }
+                                        case 'y': {
+                                                        curr_node = get_or_create_root('y');
+                                                        break;
+                                        }
+                                        case 'z': {
+                                                        curr_node = get_or_create_root('z');
+                                                        break;
+                                        }
+
                                         default:
                                                 break;
                                         
@@ -130,8 +239,7 @@ int main(void)
 
         // Tree construction is finished and its all in the trie.
 
-        // loop through the trie array, and find level 6 of all the structs by doing bfs,
-                // and printing out existing groups
+        // USE BFS to print the letters at the MIN_LEN level and are on the same prefix tree.
         
         for (int i = 0; i < ALPHABET; i++)
         {
@@ -139,7 +247,14 @@ int main(void)
         }
 }
 
-// BFS 
+
+
+/*
+bfs_to_level: 
+- iterates to the target level of a prefix tree, 
+then prints all the groups (contained by children nodes)
+at the level. 
+*/
 void bfs_to_level(struct wnode* root, int target_level)
 {
         if (!root)
@@ -189,17 +304,14 @@ void bfs_to_level(struct wnode* root, int target_level)
         {
                 // Print the group
                 // queue[front].strings
-                int count = 1;
                 for (int j = front; j < rear; j++) {
-                        printf("Group %d: ", count);
+                        printf("Group: ");
                                 for (int i = 0; i < MAXGROUP; i++) {
-                                                
                                                 if ( queue[j]->strings[i] != NULL) {
                                                         printf("%s ", queue[j]->strings[i]);
                                                 }
                                 }
                         printf("\n");
-                        count++;
                 }
         }
 }
@@ -279,15 +391,16 @@ int getword(char *word, int lim)
         }
         for (; --lim > 0; w++){
                 *w = getch();
-                if ((*w) == ';' || (*w) == ' ' || (*w) == '=') 
+                if ((*w) == ';' || (*w) == ' ' || (*w) == '=' || (*w) == '[') 
                 {
                         ungetch(*w);
                         break;
                 }
-                else if (!isalnum(*w) && *w != '_') 
+                else if (!isalnum(*w) && (*w) != '_' && (*w) != '[') 
                 // Other cases of not variable termination, so not variable
                 // scan for next characters
                 {
+                        word[0] = '\0';
                         break;
                 }
         }
@@ -337,7 +450,8 @@ int isKeyword(char* str)
                 || !strcmp(str, "static") || !strcmp(str, "struct")
                 || !strcmp(str, "goto") || !strcmp(str, "union")
                 || !strcmp(str, "volatile")|| !strcmp(str, "stdio") 
-                || !strcmp(str, "include") || !strcmp(str, "main"))
+                || !strcmp(str, "include") || !strcmp(str, "main") 
+                || !strcmp(str, "printf"))
         {
                         return 1;
         }       
