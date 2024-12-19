@@ -69,13 +69,13 @@ struct wnode* get_or_create_root(char c)
         if (tries[c-'a'] == NULL) {
                 struct wnode* char_wnode = alloc();
                 char_wnode->held_character = c;
-                tries[c - 'a'] = char_wnode; 
+                tries[c - 'a'] = char_wnode;
                 return char_wnode;
-        } 
+        }
         return tries[c - 'a'];
 }
 
-int main(void) 
+int main(void)
 {
         int n;
         char word[MAXWORD];
@@ -89,7 +89,7 @@ int main(void)
                 return 1;
         }
         stdin = fp;
-        
+
         while (getword(word, MAXWORD) != EOF)
         {
                 // do stuff with the word.
@@ -102,122 +102,11 @@ int main(void)
 
                                 // Situation: If they don't begin with the same initial char,
                                 // They don't equal anyway.
-                                
+
                                 // see what is the initial character
                                         // make an initial node in the tries array with that character
-                                struct wnode* curr_node = NULL;
-                                switch (word[0])
-                                {
-                                        case 'a': {
-                                                curr_node = get_or_create_root('a');
-                                                break;
-                                        }
-                                        case 'b': {
-                                                        curr_node = get_or_create_root('b');
-                                                        break;
-                                        }
-                                        case 'c': {
-                                                        curr_node = get_or_create_root('c');
-                                                        break;
-                                        }
-                                        case 'd': {
-                                                        curr_node = get_or_create_root('d');
-                                                        break;
-                                        }
-                                        case 'e': {
-                                                        curr_node = get_or_create_root('e');
-                                                        break;
-                                        }
-                                        case 'f': {
-                                                        curr_node = get_or_create_root('f');
-                                                        break;
-                                        }
-                                        case 'g': {
-                                                        curr_node = get_or_create_root('g');
-                                                        break;
-                                        }
-                                        case 'h': {
-                                                        curr_node = get_or_create_root('h');
-                                                        break;
-                                        }
-                                        case 'i': {
-                                                        curr_node = get_or_create_root('i');
-                                                        break;
-                                        }
-                                        case 'j': {
-                                                        curr_node = get_or_create_root('j');
-                                                        break;
-                                        }
-                                        case 'k': {
-                                                        curr_node = get_or_create_root('k');
-                                                        break;
-                                        }
-                                        case 'l': {
-                                                        curr_node = get_or_create_root('l');
-                                                        break;
-                                        }
-                                        case 'm': {
-                                                        curr_node = get_or_create_root('m');
-                                                        break;
-                                        }
-                                        case 'n': {
-                                                        curr_node = get_or_create_root('n');
-                                                        break;
-                                        }
-                                        case 'o': {
-                                                        curr_node = get_or_create_root('o');
-                                                        break;
-                                        }
-                                        case 'p': {
-                                                        curr_node = get_or_create_root('p');
-                                                        break;
-                                        }
-                                        case 'q': {
-                                                        curr_node = get_or_create_root('q');
-                                                        break;
-                                        }
-                                        case 'r': {
-                                                        curr_node = get_or_create_root('r');
-                                                        break;
-                                        }
-                                        case 's': {
-                                                        curr_node = get_or_create_root('s');
-                                                        break;
-                                        }
-                                        case 't': {
-                                                        curr_node = get_or_create_root('t');
-                                                        break;
-                                        }
-                                        case 'u': {
-                                                        curr_node = get_or_create_root('u');
-                                                        break;
-                                        }
-                                        case 'v': {
-                                                        curr_node = get_or_create_root('v');
-                                                        break;
-                                        }
-                                        case 'w': {
-                                                        curr_node = get_or_create_root('w');
-                                                        break;
-                                        }
-                                        case 'x': {
-                                                        curr_node = get_or_create_root('x');
-                                                        break;
-                                        }
-                                        case 'y': {
-                                                        curr_node = get_or_create_root('y');
-                                                        break;
-                                        }
-                                        case 'z': {
-                                                        curr_node = get_or_create_root('z');
-                                                        break;
-                                        }
+                                struct wnode* curr_node = get_or_create_root(word[0]);
 
-                                        default:
-                                                break;
-                                        
-                                }
-                                
                                 // while there are more characters in the word
                                         // use the same initial node to add a character.
                                         // put that node into an addnode function
@@ -240,7 +129,7 @@ int main(void)
         // Tree construction is finished and its all in the trie.
 
         // USE BFS to print the letters at the MIN_LEN level and are on the same prefix tree.
-        
+
         for (int i = 0; i < ALPHABET; i++)
         {
                 bfs_to_level(tries[i], MIN_LEN);
@@ -250,10 +139,10 @@ int main(void)
 
 
 /*
-bfs_to_level: 
-- iterates to the target level of a prefix tree, 
+bfs_to_level:
+- iterates to the target level of a prefix tree,
 then prints all the groups (contained by children nodes)
-at the level. 
+at the level.
 */
 void bfs_to_level(struct wnode* root, int target_level)
 {
@@ -267,12 +156,12 @@ void bfs_to_level(struct wnode* root, int target_level)
         int rear = 0;   // End of queue
         int level = 1;  // Start at level 1 since root is one character
         int level_nodes = 1;    // Nodes at current level
-        int next_level = 0;     // Nodes at next level 
+        int next_level = 0;     // Nodes at next level
 
         queue[rear] = root;
         rear++;
 
-        while (front < rear && level < target_level) 
+        while (front < rear && level < target_level)
         // We won't break if there are more nodes to process and level is smaller than target level
         {
                 struct wnode* node = queue[front];
@@ -294,7 +183,7 @@ void bfs_to_level(struct wnode* root, int target_level)
                 {
                         level++;        // We finished processing nodes we have for this level (since we can't distinguish it from the queue)
                         level_nodes = next_level;       // Go to the next level
-                        next_level = 0;                 // Set the next level 
+                        next_level = 0;                 // Set the next level
                 }
         }
 
@@ -324,7 +213,7 @@ void bfs_to_level(struct wnode* root, int target_level)
 // BOTH CASES: should append the string to the node lists
 
 struct wnode* add_node(
-                struct wnode* node, 
+                struct wnode* node,
                 char new_character,
                 const char* word
         )
@@ -335,7 +224,7 @@ struct wnode* add_node(
         {
                 struct wnode* new_node = alloc();
                 new_node->held_character = new_character;
-                
+
                 // set the string of the path
                 add_string_to_arr(new_node->strings, MAXGROUP, word);
 
@@ -391,12 +280,12 @@ int getword(char *word, int lim)
         }
         for (; --lim > 0; w++){
                 *w = getch();
-                if ((*w) == ';' || (*w) == ' ' || (*w) == '=' || (*w) == '[') 
+                if ((*w) == ';' || (*w) == ' ' || (*w) == '=' || (*w) == '[')
                 {
                         ungetch(*w);
                         break;
                 }
-                else if (!isalnum(*w) && (*w) != '_' && (*w) != '[') 
+                else if (!isalnum(*w) && (*w) != '_' && (*w) != '[')
                 // Other cases of not variable termination, so not variable
                 // scan for next characters
                 {
@@ -449,11 +338,11 @@ int isKeyword(char* str)
                 || !strcmp(str, "unsigned") || !strcmp(str, "void")
                 || !strcmp(str, "static") || !strcmp(str, "struct")
                 || !strcmp(str, "goto") || !strcmp(str, "union")
-                || !strcmp(str, "volatile")|| !strcmp(str, "stdio") 
-                || !strcmp(str, "include") || !strcmp(str, "main") 
+                || !strcmp(str, "volatile")|| !strcmp(str, "stdio")
+                || !strcmp(str, "include") || !strcmp(str, "main")
                 || !strcmp(str, "printf"))
         {
                         return 1;
-        }       
+        }
     return 0;
 }
