@@ -26,6 +26,7 @@ int isKeyword(char* str);
 int getword(char *, int);
 void add_string_to_arr(char** arr, int length, char* element);
 
+
 //////////////// BUILDING A PREFIX TREE TO FIND SIMILARLY NAMED WORDS //////////////////
 
 
@@ -40,6 +41,7 @@ struct wnode {
 
 struct wnode *alloc(void);
 struct wnode* add_node(struct wnode* node, char new_character,const char* word);
+void bfs_to_level(struct wnode* root, int target_level);
 
 static struct wnode* tries[ALPHABET];
 
@@ -69,8 +71,8 @@ int main(void)
         }
         stdin = fp;
         
-        // char *current_word;
         while (getword(word, MAXWORD) != EOF)
+        {
                 // do stuff with the word.
                 if (isalpha(word[0]))
                 {
@@ -116,11 +118,82 @@ int main(void)
                                         curr_node = newly_added;
                                         w++;
                                 }
-                                
                         }
                 }
+        }
         fclose(fp);
+
+
+        // Tree construction is finished and its all in the trie.
+
+        // loop through the trie array, and find level 6 of all the structs by doing bfs,
+                // and printing out existing groups
+        
+        for (int i = 0; i < ALPHABET; i++)
+        {
+                bfs_to_level(tries[i], 6);
+        }
 }
+
+// BFS 
+void bfs_to_level(struct wnode* root, int target_level)
+{
+        if (!root)
+        {
+                return;
+        }
+
+        struct wnode* queue[1000];
+        int front = 0;  // Front of queue
+        int rear = 0;   // End of queue
+        int level = 1;  // Start at level 1 since root is one character
+        int level_nodes = 1;    // Nodes at current level
+        int next_level = 0;     // Nodes at next level 
+
+        queue[rear] = root;
+        rear++;
+
+        while (front < rear && level < target_level) 
+        // We won't break if there are more nodes to process and level is smaller than target level
+        {
+                struct wnode* node = queue[front];
+                front++;        // Since the front node is popped
+                level_nodes--;
+
+                // Add children to queue
+                for (int i = 0; i < ALPHABET; i++)
+                {
+                        if (node->children[i])
+                        {
+                                queue[rear] = node->children[i];
+                                rear++; // Increment pipe length
+                                next_level++;   // Increment nodes at next level
+                        }
+                }
+
+                if (level_nodes == 0)
+                {
+                        level++;        // We finished processing nodes we have for this level (since we can't distinguish it from the queue)
+                        level_nodes = next_level;       // Go to the next level
+                        next_level = 0;                 // Set the next level 
+                }
+        }
+
+        // Reached the target level.
+        // All of the desired children should be at this level
+        if (level == target_level)
+        {
+                // Print the group
+                // queue[front].strings
+                for (int i = 0; i < MAXGROUP; i++) {
+                        if (queue[front]->strings[i] != NULL) {
+                                        printf("%s\n", queue[front]->strings[i]);
+                        }
+                }
+        }
+}
+
+
 
 // add_node:
 // if desired character node doesn't exist under this trie: just directly appends a value to the given node
