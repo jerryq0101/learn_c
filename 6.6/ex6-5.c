@@ -90,6 +90,34 @@ void undef(char* name, char* defn)
         }
 }
 
+// /* undef: removes (name, defn) from the hashtable */
+// int undef(char* name, char* defn)
+// {
+//         struct nlist* np;
+
+//         if ((np = lookup(name)) == NULL)
+//         {
+//                 return 1;
+//         }
+//         else                             // np != null
+//         {
+//                 if (np->next != NULL) // case where next element of np is not null.
+//                 {
+//                         struct nlist* temp = np->next;
+//                         *np = *(np->next);
+//                         free(temp);
+//                 }
+//                 else // case where next elemnt of np is null
+//                 {
+//                         free(np);
+//                         np = NULL;
+//                         // This part is bad since the np is still being referenced by the last element. 
+//                         // and/or if this is the head, the original np address is still there. (so its not null)
+//                         // conclusion: just use prev and next elements, draw it out!
+//                 }
+//         }
+// }
+
 int main(void)
 {
         char* string1 = "hello";
