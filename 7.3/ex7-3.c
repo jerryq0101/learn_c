@@ -76,8 +76,8 @@ void minprintf(char *fmt, ...)
                 printf(concat_result, dval);
                 break;
             case 's':
-                for (sval = va_arg(ap, char *); *sval; sval++)
-                    putchar(*sval);
+                sval = va_arg(ap, char*);
+                printf(concat_result, sval);
                 break;
             default:
                 putchar(*p);
@@ -100,4 +100,11 @@ int main(void)
     // TODO: Handle this precondition, so that I don't need it
     // e.g. doing d with a float, goes to negative number
     minprintf("%.5f", 12345.1);
+
+    printf("\n");
+    printf("%.1s", "ab");
+    printf("\n");
+    minprintf("%.1s", "ab");
+
+    // TODO, not sure why minprintf always ends with some BS
 }
