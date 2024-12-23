@@ -51,7 +51,7 @@ void minprintf(char *fmt, ...)
                 p++;
                 spec_size--;
             }
-            specifier = '\0';
+            *specifier = '\0';
             specifier = (char *) saved_specifier;
             p--;        // go back to the actual d or f or s character
 
@@ -64,7 +64,7 @@ void minprintf(char *fmt, ...)
             *(concat_result+1) = *p;
             *(concat_result+2) = '\0';
         }
-        
+
         switch (*p)
         {
             case 'd':
@@ -83,10 +83,10 @@ void minprintf(char *fmt, ...)
                 putchar(*p);
                 break;
         }
+        free(concat_result); // Add this
     }
     va_end(ap); /* clean up when done */
 }
-
 
 
 // field width specifiers
@@ -102,9 +102,15 @@ int main(void)
     minprintf("%.5f", 12345.1);
 
     printf("\n");
-    printf("%.1s", "ab");
+    printf("%6.1s %6.5f %5.3d", "ab", 12345.1, 123);
     printf("\n");
-    minprintf("%.1s", "ab");
+    minprintf("%6.1s %6.5f %5.3d", "ab", 12345.1, 123);
+
+    printf("\n");
+    printf("%6.8s %3.5f %2.3d", "abcde", 12345.15453453, 123);
+    printf("\n");
+    minprintf("%6.8s %3.5f %2.3d", "abcde", 12345.15453453, 123);
+
 
     // TODO, not sure why minprintf always ends with some BS
 }
