@@ -30,11 +30,11 @@ void minprintf(char *fmt, ...)
         int spec_size = 1;
 
         void* saved_p = p;
-            while (!isalpha(*p))
-            {
-                spec_size++;
-                p++;
-            }
+        while (!isalpha(*p))
+        {
+            spec_size++;
+            p++;
+        }
         p = (char *) saved_p;
 
         char* concat_result;
