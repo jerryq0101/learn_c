@@ -24,6 +24,8 @@ int main(void)
             printf("Differing lines: \n");
             printf("in1: %s\n", line1);
             printf("in2: %s\n", line2);
+            fclose(in1);
+            fclose(in2);
             return 0;
         }
     }
