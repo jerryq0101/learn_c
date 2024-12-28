@@ -4,11 +4,9 @@ Explore both possibilities.
 
 int isupper(int argument);
 */
+#include <time.h>
+#include <stdio.h>
 
-int main(void)
-{
-
-}
 
 int isspaceminspace(int a)
 {
@@ -31,4 +29,39 @@ int isspacemintime(int c) {
 int isuppermin(int a)
 {
     return a >= 65 && a <= 90;
+}
+
+
+#define ITERATIONS 10000000
+
+
+int main(void)
+{
+    clock_t start, end;
+    double cpu_time_used;
+
+    
+    start = clock();
+    
+    for (int i = 0; i < ITERATIONS; i++) {
+        isspaceminspace('\v');
+        isspaceminspace('2');
+    }
+
+    end = clock();
+    cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+
+    printf("Time used for isspace ascii %.9f \n", cpu_time_used);
+
+    start = clock();
+    
+    for (int i = 0; i < ITERATIONS; i++) {
+        isspacemintime('\v');
+        isspacemintime('5');
+    }
+
+    end = clock();
+    cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+
+    printf("Time used for isspace lookup %.9f \n", cpu_time_used);
 }
