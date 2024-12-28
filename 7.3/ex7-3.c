@@ -97,7 +97,6 @@ int main(void)
     printf("\n");
 
     // Precondition: Type maps to the same type argument
-    // TODO: Handle this precondition, so that I don't need it
     // e.g. doing d with a float, goes to negative number
     minprintf("%.5f", 12345.1);
 
@@ -110,7 +109,4 @@ int main(void)
     printf("%6.8s %3.5f %2.3d", "abcde", 12345.15453453, 123);
     printf("\n");
     minprintf("%6.8s %3.5f %2.3d", "abcde", 12345.15453453, 123);
-
-
-    // TODO, not sure why minprintf always ends with some BS
 }

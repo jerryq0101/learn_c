@@ -29,6 +29,7 @@ int main()
         if (count == 10)
         {
             printf("\n");
+            count = 0;
         }
     }
 }
