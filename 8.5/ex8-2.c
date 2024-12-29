@@ -4,6 +4,10 @@ Compare code size and execution speed.
 */
 #include <fcntl.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <ctype.h>
+#include <errno.h>
+#include <string.h>
 
 #define EOF (-1)
 #define BUFSIZ 1024
@@ -60,9 +64,9 @@ extern FILE_FIELD _iob_field[OPEN_MAX] = { /* stdin, stdout, stderr */
  { 0, (char *) 0, (char *) 0, {0, 1, 0, 0, 0}, 1 },
  { 0, (char *) 0, (char *) 0, {0, 1, 1, 0, 0}, 2 }
 };
-#define stdin (&_iob_field[0])
-#define stdout (&_iob_field[1])
-#define stderr (&_iob_field[2])
+// #define stdin (&_iob_field[0])
+// #define stdout (&_iob_field[1])
+// #define stderr (&_iob_field[2])
 
 int _fillbuf(FILE *);
 // int _flushbuf(int, FILE *);
@@ -227,7 +231,6 @@ int main(void)
 
     double cpu_time = ((double) (end - start)) / CLOCKS_PER_SEC;
     printf("fopen and _fillbuf using bitwise: %lf\n", cpu_time);
-    
 
     clock_t start2 = clock();
     for (int i = 0 ; i < ITERATIONS; i++)
@@ -240,9 +243,9 @@ int main(void)
             {
                 free(p->base);                 // Free the allocated memory in fillbuf for the buffer (if its not made using malloc, then, system will handle it)
             }
-            free(p->flag);
-            close(p->fd);                      // for the fd that is opened, we should still close it since system doesn't care for this.
-            free(p);
+            // clean up for opened p
+            free(p->flag);                     // Free the buffer allocated for BITFIELDS struct (the other vars in the filefield struct not dynamically allocated, so we don't need to take care of it)
+            close(p->fd);                      // for the fd file that is opened, we should close it since system doesn't care for this.
         }
     }
     
