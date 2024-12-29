@@ -67,7 +67,8 @@ int function_with_abstractions(int argc, char *argv[])
         fprintf(stderr, "%s: error writing stdout\n", prog);
         exit(2);
     }
-    exit(0);
+
+    return 0;
 
 }
 
@@ -100,7 +101,7 @@ int function_with_syslvl(int argc, char *argv[])
             }
     }
 
-    exit(0);
+    return 0;
 }
 
 
