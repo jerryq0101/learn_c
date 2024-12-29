@@ -176,12 +176,36 @@ FILE_FIELD *fopen_field(char *name, char *mode)
     return fp;
 }
 
+/* _fillbuf: allocate and fill input buffer */
+int _fillbuf_field(FILE_FIELD *fp)
+{
+    int bufsize;
+    if (fp->flag->_EOF || fp->flag->_ERR)
+        return EOF;
+    bufsize = (fp->flag->_UNBUF) ? 1 : BUFSIZ;
+    if (fp->base == NULL) /* no buffer yet */
+        if ((fp->base = (char *)malloc(bufsize)) == NULL)
+            return EOF; /* can't get buffer */
+    fp->ptr = fp->base;
+    fp->cnt = read(fp->fd, fp->ptr, bufsize);
+    if (--fp->cnt < 0)
+    {
+        if (fp->cnt == -1)
+            fp->flag->_EOF = 1;
+        else
+            fp->flag->_ERR = 1;
+        fp->cnt = 0;
+        return EOF;
+    }
+    return (unsigned char)*fp->ptr++;
+}
+
 #include <time.h>
 
 int printf(const char *format, ...);
 
 #define MAXLINE 100
-#define ITERATIONS 100
+#define ITERATIONS 1000
 
 int main(void)
 {
@@ -191,11 +215,11 @@ int main(void)
         FILE* p = fopen("in1.txt", "r");
         if (p != NULL)
         {
-            // _fillbuf(p);
-            // if (p-> base != NULL)              // check if fillbuf operated correctly
-            // {
-            //     free(p->base);                 // Free the allocated memory in fillbuf for the buffer (if its not made using malloc, then, system will handle it)
-            // }
+            _fillbuf(p);
+            if (p-> base != NULL)              // check if fillbuf operated correctly
+            {
+                free(p->base);                 // Free the allocated memory in fillbuf for the buffer (if its not made using malloc, then, system will handle it)
+            }
             close(p->fd);                      // for the fd that is opened, we should still close it since system doesn't care for this.
         }
     }
@@ -211,12 +235,14 @@ int main(void)
         FILE_FIELD* p = fopen_field("in1.txt", "r");
         if (p != NULL)
         {
-        //     _fillbuf(p);
-        //     if (p-> base != NULL)              // check if fillbuf operated correctly
-        //     {
-        //         free(p->base);                 // Free the allocated memory in fillbuf for the buffer (if its not made using malloc, then, system will handle it)
-        //     }
+            _fillbuf_field(p);
+            if (p-> base != NULL)              // check if fillbuf operated correctly
+            {
+                free(p->base);                 // Free the allocated memory in fillbuf for the buffer (if its not made using malloc, then, system will handle it)
+            }
+            free(p->flag);
             close(p->fd);                      // for the fd that is opened, we should still close it since system doesn't care for this.
+            free(p);
         }
     }
     
