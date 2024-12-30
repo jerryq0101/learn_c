@@ -210,7 +210,7 @@ int main(void)
     - in->cnt check prevents checking beyond base buffer
     - flushbuf only writes in->ptr - in->base 
 
-    never needs \0 at the end.
+    will never need \0 at the end.
     */
 
     /*
