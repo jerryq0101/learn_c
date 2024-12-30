@@ -56,42 +56,12 @@ int _flushbuf(int, FILE *);
 #define putcher(x) putc((x), stdout)
 
 #define PERMS 0666 /* RW for owner, group, others */
-#define MAXLINE 100
+#define MAXLINE 20
 
-// int _flushbuf(int c, FILE* fp) 
-// {
-//     if (fp == NULL || fp->base == NULL) {
-//         return EOF;
-//     }
 
-//     // commits the buffer to the file
-//     int num_written = write(fp->fd, fp->base, fp->ptr - fp->base);    // (file descriptor, buffer beginning, number of characters from buffer beginning)
-//     if (num_written == -1) {
-//         fp->flag |= _ERR;
-//         return EOF;
-//     }
-
-//     // reread the buffer
-//     int bytes_read = read(fp->fd, fp->base, MAXLINE);   // read from the file into fp's base
-    
-//     if (bytes_read == 0) {
-
-//     }
-//     if (bytes_read == 0) {
-//         if (bytes_read == -1) {
-//             fp->flag |= _ERR;
-//         }
-//         return EOF;
-//     }
-//     fp->cnt = bytes_read;                               // set fp's cnt to characters read
-//     fp->ptr = fp->base;                                 // set the next character pointer to beginning character
-
-//     return *(fp->ptr++);
-// }
-
-// int putc(int x, FILE* p) {
-//     return --(p)->cnt >= 0 ? *(p)->ptr++ = (x) : _flushbuf((x), p);
-// }
+int putc(int x, FILE* p) {
+    return --(p)->cnt >= 0 ? *(p)->ptr++ = (x) : _flushbuf((x), p);
+}
 
 FILE *fopen(char *name, char *mode)
 {
@@ -124,16 +94,69 @@ FILE *fopen(char *name, char *mode)
 }
 
 
+int _flushbuf(int c, FILE* fp) 
+{
+    // flush into file
+    if (fp->base == NULL)   // check if stuff is broken
+    {
+        return EOF;
+    }
+
+    // Write HANDLES: buffer has characters or buffer doesn't have anything.
+    int bytes_written = write(fp->fd, fp->base, fp->ptr - fp->base);
+
+    // Now we've written to the buffer, we load the buffer with next set of things
+    int bytes_read = read(fp->fd, fp->base, MAXLINE);
+
+    if (bytes_read > 0)         // file position not at end
+    {
+        fp->ptr = fp->base;
+        fp->cnt = bytes_read;
+    }
+    else if (bytes_read == 0)   // file position at the end
+    {
+        // Reset values in the buffer 
+        free(fp->base);
+        fp->base = (char *) malloc(MAXLINE);
+
+        // set the initial values
+        fp->ptr = fp->base;
+        fp->cnt = MAXLINE;
+    }
+
+    // put the character at the initial position of the new buffer
+    return (*(fp->base) = c);
+}
 
 int main(void)
 {
     FILE* in = fopen("in2.txt", "a");           // open the file
+    /*
+    Append makes the file position at the end of the file
+    Read just opens file from beginning
+    Write does a creat (clearing entire file)
+    */
     in->base = (char *) malloc(MAXLINE);        // initialize the buffer
-    in->ptr = in->base;
+    *(in->base) = "0123456789012345678";
+    in->ptr = in->base + 20;
+
+    /*
+    putc logic:
+    just put the character in the current buffer and then put it at the current file position when flushing.
+
+    - within the buffer range: sets *fp to value, then goes to the next value
+    - at the end of buffer range: calls _flushbuf
     
-    char* test = (char*) malloc(MAXLINE);
-    read(in->fd, test, 1);
-    
+    _flushbuf called scenarios: Append / Write
+    - file position is at the end of file (nothing to read in the file next)
+        - stuff in buffer (need to write to file)
+        - nothing in buffer (nothing to write)
+    - file position not at the end of file (need to read next stuff in the file)
+        - stuff in buffer (need to write to file)
+        - nothing in buffer (nothing to write)
+    */
+    putc('a', in);
+
 
     close(in->fd);
     return 0;
