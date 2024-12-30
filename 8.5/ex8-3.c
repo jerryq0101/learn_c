@@ -146,8 +146,20 @@ int main(void)
     Write does a creat (clearing entire file)
     */
     in->base = (char *) malloc(MAXLINE);        // initialize the buffer
-    strcpy(in->base, "0123456789012345678");
+    strcpy(in->base, "0123456789012345678");    // strcpy, can't do direct assignment in this case
     in->ptr = in->base + MAXLINE;
+
+    /*
+    01234567890123456789
+    in->ptr = 9
+    writes 20 characters in the buffer
+
+    a
+    in->ptr = a
+    writes 1 character in the buffer
+
+    doesn't matter if the final char is \0 or not, there won't be any termination issues.
+    */
 
     /*
     putc logic:
