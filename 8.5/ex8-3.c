@@ -103,7 +103,7 @@ int _flushbuf(int c, FILE* fp)
     }
 
     // Write HANDLES: buffer has characters or buffer doesn't have anything.
-    int bytes_written = write(fp->fd, fp->base, fp->ptr - fp->base-1);
+    int bytes_written = write(fp->fd, fp->base, fp->ptr - fp->base);
 
     // We've written the buffer contents to the file
     /*
@@ -127,12 +127,15 @@ int _flushbuf(int c, FILE* fp)
     */
     fp->ptr = fp->base;
     fp->cnt = MAXLINE;
-
+    *(fp->ptr) = c;
+    (fp->ptr)++;
     fp->cnt--;
 
     // put the character at the initial position of the new buffer
-    return (*fp->ptr++ = c);
+    return c;
 }
+
+#include <string.h>
 
 int main(void)
 {
@@ -143,8 +146,8 @@ int main(void)
     Write does a creat (clearing entire file)
     */
     in->base = (char *) malloc(MAXLINE);        // initialize the buffer
-    in->base = "0123456789012345678";
-    in->ptr = in->base + 20;
+    strcpy(in->base, "0123456789012345678");
+    in->ptr = in->base + MAXLINE;
 
     /*
     putc logic:
@@ -162,6 +165,7 @@ int main(void)
         - nothing in buffer (nothing to write)
     */
     putc('a', in);
+    _flushbuf('b', in);
 
 
     close(in->fd);
