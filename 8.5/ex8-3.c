@@ -103,29 +103,35 @@ int _flushbuf(int c, FILE* fp)
     }
 
     // Write HANDLES: buffer has characters or buffer doesn't have anything.
-    int bytes_written = write(fp->fd, fp->base, fp->ptr - fp->base);
+    int bytes_written = write(fp->fd, fp->base, fp->ptr - fp->base-1);
 
-    // Now we've written to the buffer, we load the buffer with next set of things
-    int bytes_read = read(fp->fd, fp->base, MAXLINE);
+    // We've written the buffer contents to the file
+    /*
+    Understanding:
+    
+    On the outside, we need the character passed in.
+    On the inside, we need to put this new character in the buffer and make sure that the file will get impacted by this character
+    
+    Since the write expression above controls the number of characters we print to the file (if early flush),
+    we won't overwrite any (original) file contents with a non full buffer. 
+    - THEREFORE, we don't need read.
+    
+    WE WRITE ONLY the non null characters in the buffer.
+    
+    No READ needed.
 
-    if (bytes_read > 0)         // file position not at end
-    {
-        fp->ptr = fp->base;
-        fp->cnt = bytes_read;
-    }
-    else if (bytes_read == 0)   // file position at the end
-    {
-        // Reset values in the buffer 
-        free(fp->base);
-        fp->base = (char *) malloc(MAXLINE);
+    Reset ptr to base. Purpose of ptr: point to next position in buffer to change, also showing which characters in buffer are modified.
+    Reset count. Purpose: to tell us buffer size
+    Decrement count by 1. Since we modified one thing in buffer already.
 
-        // set the initial values
-        fp->ptr = fp->base;
-        fp->cnt = MAXLINE;
-    }
+    */
+    fp->ptr = fp->base;
+    fp->cnt = MAXLINE;
+
+    fp->cnt--;
 
     // put the character at the initial position of the new buffer
-    return (*(fp->base) = c);
+    return (*fp->ptr++ = c);
 }
 
 int main(void)
@@ -137,7 +143,7 @@ int main(void)
     Write does a creat (clearing entire file)
     */
     in->base = (char *) malloc(MAXLINE);        // initialize the buffer
-    *(in->base) = "0123456789012345678";
+    in->base = "0123456789012345678";
     in->ptr = in->base + 20;
 
     /*
