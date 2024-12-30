@@ -96,10 +96,10 @@ FILE *fopen(char *name, char *mode)
 
 int _flushbuf(int c, FILE* fp) 
 {
-    // flush into file
-    if (fp->base == NULL)   // check if stuff is broken
+    if (fp->base == NULL)               // base hasn't been allocated
     {
-        return EOF;
+        fp->base = malloc(MAXLINE);     // Allocate buffer for base
+        fp->ptr = fp->base;
     }
 
     // Write HANDLES: buffer has characters or buffer doesn't have anything.
@@ -123,8 +123,11 @@ int _flushbuf(int c, FILE* fp)
     Reset ptr to base. Purpose of ptr: point to next position in buffer to change, also showing which characters in buffer are modified.
     Reset count. Purpose: to tell us buffer size
     Decrement count by 1. Since we modified one thing in buffer already.
-
     */
+
+    free(fp->base);                     // clear previous contents
+    fp->base = malloc(MAXLINE);         // reset values
+
     fp->ptr = fp->base;
     fp->cnt = MAXLINE;
     *(fp->ptr) = c;
@@ -134,6 +137,47 @@ int _flushbuf(int c, FILE* fp)
     // put the character at the initial position of the new buffer
     return c;
 }
+
+int fflush(FILE* stream)
+{
+    if (stream == NULL)
+    {
+        return -1;
+    }
+
+    if (stream->base == NULL || stream->ptr == NULL)   // Check if buffer base hasn't been allocated
+    {
+        stream->base = malloc(MAXLINE);
+        stream->ptr = stream->base;
+    }
+
+    int bytes_written = write(stream->fd, stream->base, stream->ptr - stream->base);        // writes buffer to fd
+
+    free(stream->base);                 // deallocate previous values
+    stream->base = malloc(MAXLINE);     // reset buffer values
+    
+    stream->ptr = stream->base;     // set pointer to the first element
+    stream->cnt = MAXLINE;          // reset count to initial
+    
+    return 0;
+}
+
+
+int fclose(FILE* stream)
+{
+    if ((stream->flag & _WRITE) == _WRITE)      // if we are writing, flush output to file
+    {
+        fflush(stream);
+    }
+    
+    if (stream->base)                           // Free buffer
+    {
+        free(stream->base);
+    }
+    
+    return close(stream->fd) ? EOF : 0;
+}
+
 
 #include <string.h>
 
