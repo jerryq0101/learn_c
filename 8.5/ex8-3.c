@@ -158,7 +158,11 @@ int main(void)
     in->ptr = a
     writes 1 character in the buffer
 
-    doesn't matter if the final char is \0 or not, there won't be any termination issues.
+    doesn't matter if the final char is \0 or not, there won't be any termination issues
+    - in->cnt check prevents checking beyond base buffer
+    - flushbuf only writes in->ptr - in->base 
+
+    never needs \0 at the end.
     */
 
     /*
