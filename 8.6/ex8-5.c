@@ -49,7 +49,7 @@ struct stat stbuf;
 
 #define DIRSIZ 14
 
-// struct direct
+// struct dirent
 // {                        /* directory entry */
 //     ino_t d_ino;         /* inode number */
 //     char d_name[DIRSIZ]; /* long name does not have '\0' */
@@ -79,11 +79,11 @@ void fsize(char *name)
         fprintf(stderr, "fsize: can't access %s\n", name);
         return;
     }
+    if ((stbuf.st_mode & S_IFMT) == S_IFDIR)
     {
-        if ((stbuf.st_mode & S_IFMT) == S_IFDIR)
-            dirwalk(name, fsize);
-        printf("%8ld %s\n", stbuf.st_size, name);
+        dirwalk(name, fsize);
     }
+    printf("%8ld %s\n", stbuf.st_size, name);
 }
 
 #define MAX_PATH 1024
