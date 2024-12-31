@@ -5,11 +5,10 @@ entry.
 
 #include <sys/dir.h> /* local directory structure */
 
-int fstat(int fd, struct stat *);
+// int fstat(int fd, struct stat *);
 
 #include <stdio.h>
 #include <string.h>
-#include "syscalls.h"
 #include <fcntl.h>     /* flags for read and write */
 #include <sys/types.h> /* typedefs */
 #include <sys/stat.h>  /* structure returned by stat */
@@ -23,42 +22,38 @@ typedef struct
     long ino;                /* inode number */
     char name[NAME_MAX + 1]; /* name + '\0' terminator */
 } Dirent;
-typedef struct
-{             /* minimal DIR: no buffering, etc. */
-    int fd;   /* file descriptor for the directory */
-    Dirent d; /* the directory entry */
-} DIR;
-DIR *opendir(char *dirname);
-Dirent *readdir(DIR *dfd);
-void closedir(DIR *dfd);
+
+// DIR *opendir(char *dirname);
+// Dirent *readdir(DIR *dfd);
+// void closedir(DIR *dfd);
 
 char *name;
 struct stat stbuf;
-int stat(char *, struct stat *);
-stat(name, &stbuf);
+// int stat(char *, struct stat *);
+// stat(name, &stbuf);
 
-struct stat /* inode information returned by stat */
-{
-    dev_t st_dev;    /* device of inode */
-    ino_t st_ino;    /* inode number */
-    short st_mode;   /* mode bits */
-    short st_nlink;  /* number of links to file */
-    short st_uid;    /* owners user id */
-    short st_gid;    /* owners group id */
-    dev_t st_rdev;   /* for special files */
-    off_t st_size;   /* file size in characters */
-    time_t st_atime; /* time last accessed */
-    time_t st_mtime; /* time last modified */
-    time_t st_ctime; /* time originally created */
-};
+// struct stat /* inode information returned by stat */
+// {
+//     dev_t st_dev;    /* device of inode */
+//     ino_t st_ino;    /* inode number */
+//     short st_mode;   /* mode bits */
+//     short st_nlink;  /* number of links to file */
+//     short st_uid;    /* owners user id */
+//     short st_gid;    /* owners group id */
+//     dev_t st_rdev;   /* for special files */
+//     off_t st_size;   /* file size in characters */
+//     time_t st_atime; /* time last accessed */
+//     time_t st_mtime; /* time last modified */
+//     time_t st_ctime; /* time originally created */
+// };
 
-#ifndef DIRSIZ
-#endif
-struct direct
-{                        /* directory entry */
-    ino_t d_ino;         /* inode number */
-    char d_name[DIRSIZ]; /* long name does not have '\0' */
-};
+#define DIRSIZ 14
+
+// struct direct
+// {                        /* directory entry */
+//     ino_t d_ino;         /* inode number */
+//     char d_name[DIRSIZ]; /* long name does not have '\0' */
+// };
 
 void fsize(char *); /* print file name */
 
@@ -73,7 +68,7 @@ int main(int argc, char* argv[])
     return 0;
 }
 
-int stat(char *, struct stat *);
+// int stat(char *, struct stat *);
 void dirwalk(char *, void (*fcn)(char *));
 /* fsize: print the name of file "name" */
 void fsize(char *name)
@@ -108,7 +103,6 @@ void dirwalk(char *dir, void (*fcn)(char *))
         if (strcmp(dp->name, ".") == 0 || strcmp(dp->name, ".."))
             continue; /* skip self and parent */
         if (strlen(dir) + strlen(dp->name) + 2 > sizeof(name))
-#define DIRSIZ 14
             fprintf(stderr, "dirwalk: name %s %s too long\n",
                     dir, dp->name);
         else
@@ -121,40 +115,40 @@ void dirwalk(char *dir, void (*fcn)(char *))
 }
 
 /* opendir: open a directory for readdir calls */
-DIR *opendir(char *dirname)
-{
-    int fd;
-    struct stat stbuf;
-    DIR *dp;
-    if ((fd = open(dirname, O_RDONLY, 0)) == -1 || fstat(fd, &stbuf) == -1 || (stbuf.st_mode & S_IFMT) != S_IFDIR || (dp = (DIR *)malloc(sizeof(DIR))) == NULL)
-        return NULL;
-    dp->fd = fd;
-    return dp;
-}
+// DIR *opendir(char *dirname)
+// {
+//     int fd;
+//     struct stat stbuf;
+//     DIR *dp;
+//     if ((fd = open(dirname, O_RDONLY, 0)) == -1 || fstat(fd, &stbuf) == -1 || (stbuf.st_mode & S_IFMT) != S_IFDIR || (dp = (DIR *)malloc(sizeof(DIR))) == NULL)
+//         return NULL;
+//     dp->fd = fd;
+//     return dp;
+// }
 
 /* closedir: close directory opened by opendir */
-void closedir(DIR *dp)
-{
-    if (dp)
-    {
-        close(dp->fd);
-        free(dp);
-    }
-}
+// void closedir(DIR *dp)
+// {
+//     if (dp)
+//     {
+//         close(dp->fd);
+//         free(dp);
+//     }
+// }
 
 /* readdir: read directory entries in sequence */
-Dirent *readdir(DIR *dp)
-{
-    struct direct dirbuf; /* local directory structure */
-    static Dirent d;      /* return: portable structure */
-    while (read(dp->fd, (char *)&dirbuf, sizeof(dirbuf)) == sizeof(dirbuf))
-    {
-        if (dirbuf.d_ino == 0) /* slot not in use */
-            continue;
-        d.ino = dirbuf.d_ino;
-        strncpy(d.name, dirbuf.d_name, DIRSIZ);
-        d.name[DIRSIZ] = '\0'; /* ensure termination */
-        return &d;
-    }
-    return NULL;
-}
+// Dirent *readdir(DIR *dp)
+// {
+//     struct direct dirbuf; /* local directory structure */
+//     static Dirent d;      /* return: portable structure */
+//     while (read(dp->fd, (char *)&dirbuf, sizeof(dirbuf)) == sizeof(dirbuf))
+//     {
+//         if (dirbuf.d_ino == 0) /* slot not in use */
+//             continue;
+//         d.ino = dirbuf.d_ino;
+//         strncpy(d.name, dirbuf.d_name, DIRSIZ);
+//         d.name[DIRSIZ] = '\0'; /* ensure termination */
+//         return &d;
+//     }
+//     return NULL;
+// }
