@@ -243,6 +243,7 @@ int fseek(FILE* fp, long offset, int origin)
 
 int main(void)
 {
+    // Test case for reading the input
 	FILE* in = fopen("in3.txt", "r");
     int first = getc(in);
     
@@ -251,8 +252,29 @@ int main(void)
         return -1;
     }
 
-	fseek(in, 4, 0);
+	fseek(in, 5, 0);
     int second = getc(in);
+
+    fclose(in);
+
+    // Test case for append.
+    in = fopen("in3.txt", "a");
+    first = putc('x', in);
+    fflush(in);
+    fseek(in, 5, 0);
+    second = putc('x', in);
+    fflush(in);
+    fclose(in);
+
+    // Test case for writing
+    in = fopen("in3.txt", "w");
+    first = putc('x', in);
+    fflush(in);
+    fseek(in, 0, 0);
+    second = putc('x', in);
+    fflush(in);
+    fclose(in);
+
 
     return 0;
 }
