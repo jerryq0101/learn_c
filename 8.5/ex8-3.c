@@ -58,6 +58,10 @@ int _flushbuf(int, FILE *);
 #define PERMS 0666 /* RW for owner, group, others */
 #define MAXLINE 20
 
+int fclose(FILE* stream);
+FILE *fopen(char *name, char *mode);
+int fflush(FILE* stream);
+int fclose(FILE* stream);
 
 int putc(int x, FILE* p) {
     return --(p)->cnt >= 0 ? *(p)->ptr++ = (x) : _flushbuf((x), p);
@@ -170,7 +174,7 @@ int fclose(FILE* stream)
         fflush(stream);
     }
     
-    if (stream->base)                           // Free buffer
+    if (stream->base != NULL)                           // Free buffer
     {
         free(stream->base);
     }
@@ -189,9 +193,9 @@ int main(void)
     Read just opens file from beginning
     Write does a creat (clearing entire file)
     */
-    in->base = (char *) malloc(MAXLINE);        // initialize the buffer
-    strcpy(in->base, "0123456789012345678");    // strcpy, can't do direct assignment in this case
-    in->ptr = in->base + MAXLINE;
+    // in->base = (char *) malloc(MAXLINE);        // initialize the buffer
+    // strcpy(in->base, "01234567890123456789");    // strcpy, can't do direct assignment in this case
+    // in->ptr = in->base + MAXLINE;
 
     /*
     01234567890123456789
@@ -206,7 +210,7 @@ int main(void)
     - in->cnt check prevents checking beyond base buffer
     - flushbuf only writes in->ptr - in->base 
 
-    never needs \0 at the end.
+    will never need \0 at the end.
     */
 
     /*
@@ -225,9 +229,14 @@ int main(void)
         - nothing in buffer (nothing to write)
     */
     putc('a', in);
-    _flushbuf('b', in);
+    putc('b', in);
 
+    _flushbuf('c', in);
 
-    close(in->fd);
+    putc('d', in);
+    putc('e', in);
+    fflush(in);
+
+    fclose(in);
     return 0;
 }
