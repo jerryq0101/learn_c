@@ -53,9 +53,9 @@ int _flushbuf(int, FILE *);
 #define feof(p) ((p)->flag & _EOF) != 0)
 #define ferror(p) ((p)->flag & _ERR) != 0)
 #define fileno(p) ((p)->fd)
-#define getc(p) (--(p)->cnt >= 0                  \
-                     ? (unsigned char)*(p)->ptr++ \
-                     : _fillbuf(p))
+// #define getc(p) (--(p)->cnt >= 0                  \
+//                      ? (unsigned char)*(p)->ptr++ \
+//                      : _fillbuf(p))
 
 #define getchar() getc(stdin)
 #define putcher(x) putc((x), stdout)
@@ -65,6 +65,15 @@ int _flushbuf(int, FILE *);
 
 int fseek(FILE* fp, long offset, int origin);
 
+int getc(FILE* p) {
+    return (--(p)->cnt >= 0                  \
+                     ? (unsigned char)*(p)->ptr++ \
+                     : _fillbuf(p));
+}
+
+int putc(int x, FILE* p) {
+    return --(p)->cnt >= 0 ? *(p)->ptr++ = (x) : _flushbuf((x), p);
+}
 
 FILE *fopen(char *name, char *mode)
 {
@@ -96,6 +105,29 @@ FILE *fopen(char *name, char *mode)
     return fp;
 }
 
+/* _fillbuf: allocate and fill input buffer */
+int _fillbuf(FILE *fp)
+{
+    int bufsize;
+    if ((fp->flag & (_READ | _EOF | _ERR)) != _READ)
+        return EOF;
+    bufsize = (fp->flag & _UNBUF) ? 1 : MAXLINE;
+    if (fp->base == NULL) /* no buffer yet */
+        if ((fp->base = (char *)malloc(bufsize)) == NULL)
+            return EOF; /* can't get buffer */
+    fp->ptr = fp->base;
+    fp->cnt = read(fp->fd, fp->ptr, bufsize);
+    if (--fp->cnt < 0)
+    {
+        if (fp->cnt == -1)
+            fp->flag |= _EOF;
+        else
+            fp->flag |= _ERR;
+        fp->cnt = 0;
+        return EOF;
+    }
+    return (unsigned char)*fp->ptr++;
+}
 
 int _flushbuf(int c, FILE* fp) 
 {
@@ -212,5 +244,15 @@ int fseek(FILE* fp, long offset, int origin)
 int main(void)
 {
 	FILE* in = fopen("in3.txt", "r");
+    int first = getc(in);
+    
+    if (in == NULL)
+    {
+        return -1;
+    }
+
 	fseek(in, 4, 0);
+    int second = getc(in);
+
+    return 0;
 }
