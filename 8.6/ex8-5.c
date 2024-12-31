@@ -7,14 +7,6 @@ entry.
 
 int fstat(int fd, struct stat *);
 
-#ifndef DIRSIZ
-#endif
-struct direct
-{                        /* directory entry */
-    ino_t d_ino;         /* inode number */
-    char d_name[DIRSIZ]; /* long name does not have '\0' */
-};
-
 #include <stdio.h>
 #include <string.h>
 #include "syscalls.h"
@@ -23,9 +15,18 @@ struct direct
 #include <sys/stat.h>  /* structure returned by stat */
 #include "dirent.h"
 
-void fsize(char *)
-    /* print file name */
-    main(int argc, char **argv)
+#ifndef DIRSIZ
+#endif
+struct direct
+{                        /* directory entry */
+    ino_t d_ino;         /* inode number */
+    char d_name[DIRSIZ]; /* long name does not have '\0' */
+};
+
+void fsize(char *); /* print file name */
+
+
+int main(int argc, char* argv[])
 {
     if (argc == 1) /* default: current directory */
         fsize(".");
@@ -119,9 +120,4 @@ Dirent *readdir(DIR *dp)
         return &d;
     }
     return NULL;
-}
-
-int main(void)
-{
-    
 }
