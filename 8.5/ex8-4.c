@@ -131,30 +131,39 @@ int _fillbuf(FILE *fp)
 
 int _flushbuf(int c, FILE* fp) 
 {
+    int buf_size = (fp->flag & _UNBUF) ? 1 : MAXLINE;
+
     if (fp->base == NULL)               // base hasn't been allocated, allocate a buffer for it
     {
-        fp->base = malloc(MAXLINE);     // Allocate buffer for base
-
-        // TODO: CHECK FOR MALLOC FAILURE
+        fp->base = malloc(buf_size);     // Allocate buffer for base
+        if (fp->base == NULL)
+        {
+            return EOF;
+        }
         fp->ptr = fp->base;
     }
 
-    // TODO: Check for error flag
+    if ((fp->flag & _ERR) || (fp->flag & _EOF))
+    {
+        return EOF;
+    }
 
     if ((fp->flag & _WRITE) != _WRITE || (fp->flag & _ERR) == _ERR)
     {
         return EOF;
     }
-
-    // TODO: Check for UNBUF flag
-
+    
     // Write HANDLES: buffer has characters or buffer doesn't have anything.
     int bytes_written = write(fp->fd, fp->base, fp->ptr - fp->base);
+    if (bytes_written <= 0)
+    {
+        return EOF;
+    }
 
     // actual answer logic.
     // if null, malloc to base
     // if not null, write the number of bytes to the file and 
-    // TODO: CHECK FOR WRITE FAILURES.
+
     
     // then for both cases, set fp->ptr to fp->base
     // set the first buffer char to c
@@ -182,10 +191,10 @@ int _flushbuf(int c, FILE* fp)
     */
 
     free(fp->base);                     // clear previous contents
-    fp->base = malloc(MAXLINE);         // reset values
+    fp->base = malloc(buf_size);         // reset values
 
     fp->ptr = fp->base;
-    fp->cnt = MAXLINE;
+    fp->cnt = buf_size;
     *(fp->ptr) = c;
     (fp->ptr)++;
     fp->cnt--;
@@ -202,28 +211,37 @@ int fflush(FILE* stream)
         return -1;
     }
 
-    // TODO: check if _WRITE flag (flush is only used for write operations)
+    if ((stream->flag & _WRITE) != _WRITE)
+    {
+        return EOF;
+    }
 
     if (stream->base == NULL || stream->ptr == NULL)   // Check if buffer base hasn't been allocated
     {
         stream->base = malloc(MAXLINE); // CHECK IF MALLOC FAILS
+        if (stream->base == NULL)
+        {
+            return EOF;
+        }
         stream->ptr = stream->base;
     }
 
     int bytes_written = write(stream->fd, stream->base, stream->ptr - stream->base);        // writes buffer to fd
-    // TODO CAN USE _flushbuf function with a '0'
     
-    // TODO CHECK IF WRITE FAILS
+    if (bytes_written <= 0)
+    {
+        return EOF;
+    }
     
     free(stream->base);                 // deallocate previous values
     stream->base = malloc(MAXLINE);     // reset buffer values
-
-    // TODO ALL OF ABOVE MIGHT FAIL
-
-    // TODO Consider UNBUF flag for this
+    if (stream->base == NULL)
+    {
+        return EOF;
+    }
     
     stream->ptr = stream->base;     // set pointer to the first element
-    stream->cnt = MAXLINE;          // reset count to initial
+    stream->cnt = (stream->flag & _UNBUF) ? 1 : MAXLINE;          // reset count to initial, (if unbuf, every new character causes buffer flush, unless its in the beginning)
     return 0;
 }
 
