@@ -174,7 +174,7 @@ int fclose(FILE* stream)
         fflush(stream);
     }
     
-    if (stream->base != NULL)                           // Free buffer
+    if (stream->base)                           // Free buffer.
     {
         free(stream->base);
     }
