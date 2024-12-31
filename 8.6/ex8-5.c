@@ -83,7 +83,13 @@ void fsize(char *name)
     {
         dirwalk(name, fsize);
     }
-    printf("%8ld %s\n", stbuf.st_size, name);
+    printf(
+        "size-%8ld owner-%d owner-group-%d name-%s\n", 
+        stbuf.st_size,
+        stbuf.st_uid,
+        stbuf.st_gid, 
+        name
+    );
 }
 
 #define MAX_PATH 1024
