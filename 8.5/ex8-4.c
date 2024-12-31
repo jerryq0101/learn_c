@@ -131,14 +131,35 @@ int _fillbuf(FILE *fp)
 
 int _flushbuf(int c, FILE* fp) 
 {
-    if (fp->base == NULL)               // base hasn't been allocated
+    if (fp->base == NULL)               // base hasn't been allocated, allocate a buffer for it
     {
         fp->base = malloc(MAXLINE);     // Allocate buffer for base
+
+        // TODO: CHECK FOR MALLOC FAILURE
         fp->ptr = fp->base;
     }
 
+    // TODO: Check for error flag
+
+    if ((fp->flag & _WRITE) != _WRITE || (fp->flag & _ERR) == _ERR)
+    {
+        return EOF;
+    }
+
+    // TODO: Check for UNBUF flag
+
     // Write HANDLES: buffer has characters or buffer doesn't have anything.
     int bytes_written = write(fp->fd, fp->base, fp->ptr - fp->base);
+
+    // actual answer logic.
+    // if null, malloc to base
+    // if not null, write the number of bytes to the file and 
+    // TODO: CHECK FOR WRITE FAILURES.
+    
+    // then for both cases, set fp->ptr to fp->base
+    // set the first buffer char to c
+    // increment ptr
+    // decrement cnt
 
     // We've written the buffer contents to the file
     /*
@@ -176,39 +197,50 @@ int _flushbuf(int c, FILE* fp)
 
 int fflush(FILE* stream)
 {
-    if (stream == NULL)
+    if (stream == NULL) 
     {
         return -1;
     }
 
+    // TODO: check if _WRITE flag (flush is only used for write operations)
+
     if (stream->base == NULL || stream->ptr == NULL)   // Check if buffer base hasn't been allocated
     {
-        stream->base = malloc(MAXLINE);
+        stream->base = malloc(MAXLINE); // CHECK IF MALLOC FAILS
         stream->ptr = stream->base;
     }
 
     int bytes_written = write(stream->fd, stream->base, stream->ptr - stream->base);        // writes buffer to fd
-
+    // TODO CAN USE _flushbuf function with a '0'
+    
+    // TODO CHECK IF WRITE FAILS
+    
     free(stream->base);                 // deallocate previous values
     stream->base = malloc(MAXLINE);     // reset buffer values
+
+    // TODO ALL OF ABOVE MIGHT FAIL
+
+    // TODO Consider UNBUF flag for this
     
     stream->ptr = stream->base;     // set pointer to the first element
     stream->cnt = MAXLINE;          // reset count to initial
-    
     return 0;
 }
 
 
 int fclose(FILE* stream)
 {
-    if ((stream->flag & _WRITE) == _WRITE)      // if we are writing, flush output to file
+    if ((stream->flag & _UNBUF) == 0)               // no buffer behaviour
     {
-        fflush(stream);
-    }
-    
-    if (stream->base)                           // Free buffer.
-    {
-        free(stream->base);
+        if ((stream->flag & _WRITE) == _WRITE)      // if we are writing, flush output to file
+        {
+            fflush(stream);
+        }
+        
+        if (stream->base)                           // Free buffer.
+        {
+            free(stream->base);
+        }
     }
     
     return close(stream->fd) ? EOF : 0;
@@ -217,17 +249,22 @@ int fclose(FILE* stream)
 
 int fseek(FILE* fp, long offset, int origin)
 {
-	if (((fp->flag) & _WRITE) == _WRITE)	// write op file
-	{
-		// flush potential changes before moving file position
-		fflush(fp);
-	}
-	else if ((fp->flag & _READ) == _READ)	// read op file
-	{
-		// invalidate the buffer and positions (as we are at a new position)
-		fp->ptr = fp->base;
-		fp->cnt = -1;
-	}
+    // Consider unbuf flag, just directly skip the buffer considerations
+    if ((fp->flag & _UNBUF) == 0)
+    {
+        if (((fp->flag) & _WRITE) == _WRITE)	// write op file
+        {
+            // flush potential changes before moving file position
+            fflush(fp);
+        }
+        else if ((fp->flag & _READ) == _READ)	// read op file
+        {
+            // invalidate the buffer and positions (as we are at a new position)
+            fp->ptr = fp->base;
+            fp->cnt = -1;
+        }
+    }
+
 	
 	int pos = lseek(fp->fd, offset, origin);
 	if (pos == -1)
