@@ -12,7 +12,11 @@ entry.
 #include <fcntl.h>     /* flags for read and write */
 #include <sys/types.h> /* typedefs */
 #include <sys/stat.h>  /* structure returned by stat */
-#include "dirent.h"
+#include <dirent.h>
+#include <time.h>
+#include <pwd.h>
+#include <grp.h>
+
 
 
 #define NAME_MAX 14 /* longest filename component; */
@@ -49,11 +53,6 @@ struct stat stbuf;
 
 #define DIRSIZ 14
 
-// struct dirent
-// {                        /* directory entry */
-//     ino_t d_ino;         /* inode number */
-//     char d_name[DIRSIZ]; /* long name does not have '\0' */
-// };
 
 void fsize(char *); /* print file name */
 
@@ -97,8 +96,8 @@ void fsize(char *name)
 void dirwalk(char *dir, void (*fcn)(char *))
 {
     char name[MAX_PATH];
-    Dirent *dp;
-    DIR *dfd;
+    struct dirent *dp;          // we iterate through this
+    DIR *dfd;                   // holds the directory descriptor, which we can read to get each entry inside this directory.
     if ((dfd = opendir(dir)) == NULL)
     {
         fprintf(stderr, "dirwalk: can't open %s\n", dir);
@@ -106,14 +105,14 @@ void dirwalk(char *dir, void (*fcn)(char *))
     }
     while ((dp = readdir(dfd)) != NULL)
     {
-        if (strcmp(dp->name, ".") == 0 || strcmp(dp->name, ".."))
+        if (strcmp(dp->d_name, ".") == 0 || strcmp(dp->d_name, "..") == 0)
             continue; /* skip self and parent */
-        if (strlen(dir) + strlen(dp->name) + 2 > sizeof(name))
+        if (strlen(dir) + strlen(dp->d_name) + 2 > sizeof(name))
             fprintf(stderr, "dirwalk: name %s %s too long\n",
-                    dir, dp->name);
+                    dir, dp->d_name);
         else
         {
-            sprintf(name, "%s/%s", dir, dp->name);
+            sprintf(name, "%s/%s", dir, dp->d_name);
             (*fcn)(name);
         }
     }
