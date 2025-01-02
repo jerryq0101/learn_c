@@ -102,7 +102,7 @@ void *malloc(unsigned nbytes)
 void* calloc(size_t nitems, size_t size)
 {
     void* ptr;
-    void* set_to_zero(void*, size_t);
+    char* set_to_zero(char*, size_t);
     if ((ptr = malloc(nitems * size)) == NULL)
     {
         return NULL;
@@ -110,22 +110,22 @@ void* calloc(size_t nitems, size_t size)
     
     for (int i = 0; i < nitems*size; i+=size)
     {
-        // do a memset on i+ptr to set to 0
-        set_to_zero(ptr+i, size);
+        char* concat_pointer = (char *) ptr;
+        concat_pointer+=i;
+        *concat_pointer = '4';
+        set_to_zero(concat_pointer, size);
     }
     return ptr;
 }
 
-void* set_to_zero(void* ptr, size_t size)
+char* set_to_zero(char* ptr, size_t size)
 {
-    unsigned char* ptr_position = (unsigned char*) ptr;
-
     for (size_t i = 0; i < size; i++)
     {
-        *(ptr_position+i) = 0;
+        *(ptr+i) = 0;
     }
 
-    return (void*) ptr_position;
+    return (void*) ptr;
 }
 
 int main(void)
