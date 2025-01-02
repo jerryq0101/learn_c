@@ -170,8 +170,8 @@ void bfree(void* ap, size_t n)
     // set the first 8 bytes to be header
     Header* header_cast = (Header *) ap;
     header_cast->s.size = blocks;
-    header_cast->s.ptr = ap+n;
-    free((Header *) ap+1);
+    header_cast->s.ptr = header_cast+n;
+    free((Header *) header_cast+1);
 }
 
 
