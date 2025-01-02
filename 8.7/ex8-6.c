@@ -99,10 +99,19 @@ void *malloc(unsigned nbytes)
 }
 
 
+#include <stdint.h>
+#define SIZE_MAX ((size_t)-1)
+
 void* calloc(size_t nitems, size_t size)
 {
     void* ptr;
-    char* set_to_zero(char*, size_t);
+    void set_to_zero(char*, size_t);
+
+    if (size && nitems && nitems < SIZE_MAX / size)       // check for valid mult value;
+    {
+        return NULL;
+    }
+
     if ((ptr = malloc(nitems * size)) == NULL)
     {
         return NULL;
@@ -110,28 +119,24 @@ void* calloc(size_t nitems, size_t size)
     
     for (int i = 0; i < nitems*size; i+=size)
     {
-        char* concat_pointer = (char *) ptr;
+        char* concat_pointer = (char *) ptr;        // same address as ptr - so when dereferencing and set value, it sets ptr's value
         concat_pointer+=i;
-        *concat_pointer = '4';
         set_to_zero(concat_pointer, size);
     }
     return ptr;
 }
 
-char* set_to_zero(char* ptr, size_t size)
+void set_to_zero(char* ptr, size_t size)
 {
     for (size_t i = 0; i < size; i++)
     {
         *(ptr+i) = 0;
     }
-
-    return (void*) ptr;
 }
 
 int main(void)
 {
     void** arr = calloc(5, 5);
-    
 }
 
 
