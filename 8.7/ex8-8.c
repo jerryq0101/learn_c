@@ -160,7 +160,7 @@ can I use free in this case?
 */
 void bfree(void* ap, size_t n)
 {
-    size_t blocks = n / 8;                      // see how many blocks I can convert
+    size_t blocks = (n + sizeof(Header) - 1) / sizeof(Header) + 1;                      // see how many blocks I can convert
     
     if (blocks <= 1)                            // Check if ap has enough storage.
     {
@@ -170,13 +170,15 @@ void bfree(void* ap, size_t n)
     // set the first 8 bytes to be header
     Header* header_cast = (Header *) ap;
     header_cast->s.size = blocks;
-    header_cast->s.ptr = header_cast+n;
     free((Header *) header_cast+1);
 }
 
 
 int main(void)
 {
-    char* thing = malloc(16);
-    bfree(thing, 16);
+    char* thing = malloc(20);
+    bfree(thing, 20);
+
+    char* thing2 = malloc(34);
+    bfree(thing2, 34);
 }
